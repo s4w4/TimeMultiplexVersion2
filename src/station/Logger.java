@@ -36,9 +36,10 @@ public class Logger {
 		}
 	}
 
-	public void printMessages(List<Message> allReceivedMessage, long currentFrame) {
+	public void printMessages(List<Message> allReceivedMessage, long currentFrame, long correction) {
 		String text = ""; 
-		text += "=========================== "+currentFrame+" ==============\n";
+		long currentTime = System.currentTimeMillis();
+		text += "=========================== "+currentFrame+" =:= "+currentTime+" ("+correction+"|"+(currentTime+correction)+")==============\n";
 		for (Message message : new ArrayList<Message>(allReceivedMessage)) {
 			if (!message.isKollision()) 
 				text += message.toString()+"\n";

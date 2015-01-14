@@ -161,4 +161,11 @@ public class ClockManager {
 		return getCorrectedTimeInMS() / 1000;
 	}
 
+	/**
+	 * @return the correctionInMS
+	 */
+	public long getCorrectionInMS() {
+		return correctionInMS;
+	}
+
 }
