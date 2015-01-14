@@ -42,26 +42,26 @@ public class Logger {
 		text += "=========================== "+currentFrame+" =:= "+currentTime+" ("+correction+"|"+(currentTime+correction)+")==============\n";
 		for (Message message : new ArrayList<Message>(allReceivedMessage)) {
 			if (!message.isKollision()) 
-				text += message.toString()+"\n";
+				text += message.toString();
 			else
-				text += "<<<<< Kollision >>>>> Slot ("+message.getSendingSlot()+")\n";
+				text += "<<<<< Kollision >>>>> "+message.toString();
 		}
-		logger.info(text);
+		logger.info(text+"\n");
 	}
 	
 	public void printMessage(Message message, long frame) {
 		String text = "";
 		if (this.frame != frame) {
 			this.frame = frame; 
-			text += "\n============================= "+this.frame+" ==============\n";
+			text += "============================= "+this.frame+" ==============\n";
 		}
 		
 		if (!message.isKollision()) 
 			text +=message.toString();
 		else
-			text += "<<<<< Kollision >>>>> Slot ("+message.getSendingSlot()+")";		
+			text += "<<<<< Kollision >>>>> "+message.toString()+")";		
 
-		logger.info(text);
+		logger.info(text+"\n");
 	}
 
 	public void print(String string) {
