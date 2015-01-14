@@ -132,13 +132,17 @@ public class Message {
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
+	 * r = reserved slot
+	 * s = sending slot
 	 */
 	@Override
-	public String toString() {
-		return "Message [\nstationClass=" + stationClass + ", \ndata="
-				+ Arrays.toString(data) + ", \nreservedSlot=" + reservedSlot
-				+ ", \nsendTime=" + sendTime + ", \nsendingSlot=" + sendingSlot
-				+ ", \nkollision=" + kollision + "]";
+	public String toString() {								
+		
+		String dataString = "";
+		for (int i=0; i <= 10; i++)
+			dataString += data[i]+"";
+		return "Message [ '"+ dataString + "', " + stationClass + ","
+				+ " r:" + reservedSlot + ", s:" + sendingSlot + ", " + "TX:" + sendTime + "]";
 	}
 	
 
