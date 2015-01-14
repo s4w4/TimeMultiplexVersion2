@@ -37,8 +37,8 @@ public class Logger {
 	}
 
 	public void printMessages(List<Message> allReceivedMessage, long currentFrame) {
-		String text = "";
-		text += "============== "+currentFrame+" ==============\n";
+		String text = ""; 
+		text += "=========================== "+currentFrame+" ==============\n";
 		for (Message message : new ArrayList<Message>(allReceivedMessage)) {
 			if (!message.isKollision()) 
 				text += message.toString()+"\n";
@@ -51,8 +51,8 @@ public class Logger {
 	public void printMessages(Message message, long frame) {
 		String text = "";
 		if (this.frame != frame) {
-			this.frame = frame;
-			text += "============== "+this.frame+" ==============\n";
+			this.frame = frame; 
+			text += "============================= "+this.frame+" ==============\n";
 		}
 		
 		if (!message.isKollision()) 
