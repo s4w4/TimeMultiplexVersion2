@@ -11,7 +11,7 @@ public class AppLogger {
 		Message m = new Message('b');
 		messages.add(m);
 		while(true){
-			log.printMessages(messages);
+			log.printMessages(messages, 0);
 			Thread.sleep(1000);
 		}
 	}

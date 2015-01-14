@@ -11,6 +11,7 @@ public class Logger {
 
 	private java.util.logging.Logger logger;
 	private FileHandler fh;
+	private long frame = 0;
 
 	public Logger(String name) {
 		int index = 0;
@@ -35,21 +36,35 @@ public class Logger {
 		}
 	}
 
-	public void printMessages(List<Message> allReceivedMessage) {
+	public void printMessages(List<Message> allReceivedMessage, long currentFrame) {
+		String text = "";
+		text += "============== "+currentFrame+" ==============\n";
 		for (Message message : new ArrayList<Message>(allReceivedMessage)) {
 			if (!message.isKollision()) 
-				logger.info(message.toString());
+				text += message.toString();
 			else
-				logger.info("<<<<< Kollision >>>>> Slot ("+message.getSendingSlot()+")");
+				text += "<<<<< Kollision >>>>> Slot ("+message.getSendingSlot()+")";
 		}
+		logger.info(text);
 	}
 	
-	public void printMessages(Message message) {
+	public void printMessages(Message message, long frame) {
+		String text = "";
+		if (this.frame != frame) {
+			this.frame = frame;
+			text += "============== "+this.frame+" ==============\n";
+		}
+		
 		if (!message.isKollision()) 
-			logger.info(message.toString());
+			text +=message.toString();
 		else
-			logger.info("<<<<< Kollision >>>>> Slot ("+message.getSendingSlot()+")");		
+			text += "<<<<< Kollision >>>>> Slot ("+message.getSendingSlot()+")";		
+
+		logger.info(text);
+	}
+
+	public void print(String string) {
+		logger.info(string);
 	}
 		
-
 }

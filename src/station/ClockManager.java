@@ -157,4 +157,8 @@ public class ClockManager {
 		return ((slot - 1) * SLOT_TIME_IN_MS );// + SLOT_TIME_IN_MS/2;
 	}
 
+	public long getCurrentFrame() {
+		return getCorrectedTimeInMS() / 1000;
+	}
+
 }
