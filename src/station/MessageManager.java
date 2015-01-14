@@ -106,7 +106,7 @@ public class MessageManager {
 	public void resetFrame() {
 //		System.out.println("==================================================================================");
 		this.freeSlots = resetFreeSlots(clockManager.getSlotCount());
-		logger.printMessages(allReceivedMessage, clockManager.getCurrentFrame(), clockManager.getCorrectionInMS());
+		logger.printMessages(allReceivedMessage, clockManager.getCurrentFrame()-1, clockManager.getCorrectionInMS());
 		this.allReceivedMessage = new ArrayList<Message>();
 		this.ownMessage = null;
 		this.lastMessage = null;

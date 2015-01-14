@@ -72,7 +72,7 @@ public class Sender extends Thread {
 					multicastSocket.send(datagramPacket);
 					messageManager.setOwnMessage(message);
 					messageManager.setReservedSlot(reserveredSlot);
-					logger.printMessages(message, clockManager.getCurrentFrame());
+					logger.printMessage(message, clockManager.getCurrentFrame());
 				} else {
 					logger.print("To Late \n"+message.toString());
 				}

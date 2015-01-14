@@ -49,11 +49,11 @@ public class Logger {
 		logger.info(text);
 	}
 	
-	public void printMessages(Message message, long frame) {
+	public void printMessage(Message message, long frame) {
 		String text = "";
 		if (this.frame != frame) {
 			this.frame = frame; 
-			text += "============================= "+this.frame+" ==============\n";
+			text += "\n============================= "+this.frame+" ==============\n";
 		}
 		
 		if (!message.isKollision()) 
