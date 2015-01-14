@@ -69,9 +69,9 @@ public class MessageManager {
 	 * @param currentMessage
 	 */
 	private void handleKollision(Message currentMessage) {
-		System.out.println("HANDLE KOLLISION "
-				+ currentMessage.getSendingSlot() + " : "
-				+ lastMessage.getSendingSlot());
+//		System.out.println("HANDLE KOLLISION "
+//				+ currentMessage.getSendingSlot() + " : "
+//				+ lastMessage.getSendingSlot());
 		int index = allReceivedMessage.size();
 		allReceivedMessage.get(index - 1).setKollision(true);
 		allReceivedMessage.get(index - 2).setKollision(true);
@@ -104,7 +104,7 @@ public class MessageManager {
 	}
 
 	public void resetFrame() {
-		System.out.println("==================================================================================");
+//		System.out.println("==================================================================================");
 		this.freeSlots = resetFreeSlots(clockManager.getSlotCount());
 		logger.printMessages(allReceivedMessage);
 		this.allReceivedMessage = new ArrayList<Message>();
@@ -143,11 +143,11 @@ public class MessageManager {
 	 */
 	public byte getFreeSlot() {
 		if (this.reservedSlot > 0) {
-			System.out.println("RESERVED SLOT : " + reservedSlot);
+//			System.out.println("RESERVED SLOT : " + reservedSlot);
 			return reservedSlot;
 		} else {
 			byte cS = calcNewSlot();
-			System.out.println("CALC SLOT: " + cS);
+//			System.out.println("CALC SLOT: " + cS);
 			return cS;
 		}
 	}

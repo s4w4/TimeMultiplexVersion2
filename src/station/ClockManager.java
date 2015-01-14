@@ -52,7 +52,7 @@ public class ClockManager {
 	 * @return
 	 */
 	public boolean isEOF() {
-		System.out.println("\t" + correctionLastFrameInMS);
+//		System.out.println("\t" + correctionLastFrameInMS);
 		return correctionLastFrameInMS >= 0;
 	}
 
