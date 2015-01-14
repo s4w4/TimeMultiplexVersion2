@@ -41,9 +41,9 @@ public class Logger {
 		text += "============== "+currentFrame+" ==============\n";
 		for (Message message : new ArrayList<Message>(allReceivedMessage)) {
 			if (!message.isKollision()) 
-				text += message.toString();
+				text += message.toString()+"\n";
 			else
-				text += "<<<<< Kollision >>>>> Slot ("+message.getSendingSlot()+")";
+				text += "<<<<< Kollision >>>>> Slot ("+message.getSendingSlot()+")\n";
 		}
 		logger.info(text);
 	}
