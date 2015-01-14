@@ -29,7 +29,7 @@ public class App2 {
 //            sender.start();
             
             System.out.println("-------------Empfangen---------------");
-            Logger logger = new Logger();
+            Logger logger = new Logger("Log");
 			ClockManager clockManager = new ClockManager(0);
 			MessageManager messageManager = new MessageManager(logger, clockManager);
 			Receiver receiver = new Receiver(multicastSocket, messageManager );

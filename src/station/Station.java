@@ -67,13 +67,15 @@ public class Station extends Thread {
 	 */
 	private ClockManager clockManager;
 
-	private Logger logger;
+	private Logger loggerReceiver;
+	private Logger loggerSender;
 
 	private MessageManager messageManager;
 
 	private DataManager dataManager;
 
 	private long utcOffsetInMS;
+
 
 	public Station(String interfaceName, String mcastAddress, int receivePort,
 			char stationClass, long utcOffsetInMS) {
@@ -92,11 +94,13 @@ public class Station extends Thread {
 			 ****************************************************************/
 			System.out.println("============== INITIAL PHASE ==============");
 			// Create Logger (Datensenke)
-			this.logger = new Logger();
+			this.loggerReceiver = new Logger("LogReceiver");
+			this.loggerSender = new Logger("LogSender");
+			
 			// Create ClockManager
 			this.clockManager = new ClockManager(utcOffsetInMS);
 			// Create MessageManager
-			this.messageManager = new MessageManager(logger, clockManager);
+			this.messageManager = new MessageManager(loggerReceiver, clockManager);
 
 			// Create MulticastSocket
 			multicastSocket = new MulticastSocket(receivePort);
@@ -160,7 +164,7 @@ public class Station extends Thread {
 	private void sendingPhase() {
 		byte freeSlot = this.messageManager.getFreeSlot();
 		this.resetFrame();
-		Sender sender = new Sender(dataManager, messageManager, clockManager, multicastSocket, freeSlot, mcastAddress, receivePort, stationClass);
+		Sender sender = new Sender(dataManager, messageManager, clockManager, multicastSocket, freeSlot, mcastAddress, receivePort, stationClass, loggerSender);
 		sender.start();
 	}
 

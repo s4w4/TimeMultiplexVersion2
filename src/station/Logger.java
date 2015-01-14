@@ -12,8 +12,7 @@ public class Logger {
 	private java.util.logging.Logger logger;
 	private FileHandler fh;
 
-	public Logger() {
-		String name = "Log";
+	public Logger(String name) {
 		int index = 0;
 		File file;
 		do {
@@ -42,8 +41,15 @@ public class Logger {
 				logger.info(message.toString());
 			else
 				logger.info("<<<<< Kollision >>>>> Slot ("+message.getSendingSlot()+")");
-			
 		}
 	}
+	
+	public void printMessages(Message message) {
+		if (!message.isKollision()) 
+			logger.info(message.toString());
+		else
+			logger.info("<<<<< Kollision >>>>> Slot ("+message.getSendingSlot()+")");		
+	}
+		
 
 }
