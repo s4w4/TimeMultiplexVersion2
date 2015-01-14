@@ -9,7 +9,9 @@ import station.Logger;
 import station.MessageManager;
 import station.Receiver;
 import station.Station;
-
+/**
+ * App
+ */
 public class App {
 	public static void main(String[] args) throws IOException {
 		int receivePort = 16000;
