@@ -1,5 +1,6 @@
 package station;
 
+
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
@@ -126,34 +127,39 @@ public class Station extends Thread {
 			this.dataSourceListener.start();
 			this.receiver.start();
 
+			
 			startPhase();
-
-			// resetFrame();
-
 			listeningPhase();
 
 			do {
+				System.out.println("################################################## hauptweil start");
 
 				if (this.clockManager.isStartFrame()) {
+					System.out.println("################################################## ");
+					System.out.println("################################################## start frame " + clockManager.getCurrentFrame() +" CT = "+ clockManager.currentTimeMillis());
+					System.out.println("################################################## ");
+					loggerStation.print(clockManager.getCurrentFrame()+": start " + clockManager.getCurrentFrame()  +" CT = "+ clockManager.currentTimeMillis());
 
 					if (this.messageManager.isOwnKollision()
 							|| !this.messageManager.isFreeSlotNextFrame()) {
-						// messageManager.resetLastReceivedSlot();
-						loggerStation.print(clockManager.getCurrentFrame()+": OwnKollision OR NoFreeSlotsInNextFrame");
+						loggerStation.print(clockManager.getCurrentFrame()+"################################################## : OwnKollision OR NoFreeSlotsInNextFrame");
 						resetFrame();
 					} else {
-						if (!this.messageManager.isOwnMessageSended()){
+//						if (!this.messageManager.isOwnMessageSended()){
+							loggerStation.print(clockManager.getCurrentFrame()+"################################################## : keine OwnKollision OR FreeSlotsInNextFrame");
+
 							sendingPhase();
-						}
+//						}
 					}
 
 				} else {
-//					messageManager.setReservedSlot((byte) 0);
+					//Zurücksetzen
+					loggerStation.print(clockManager.getCurrentFrame()+"################################################## : hauptwhlie else");
+					messageManager.setReservedSlot((byte) 0);
 					resetFrame();
 					startPhase();
-					// resetFrame();
 				}
-
+				loggerStation.print(clockManager.getCurrentFrame()+"################################################## : hauptwhlie finish ");
 				listeningPhase();
 
 			} while (!finish);
@@ -163,34 +169,37 @@ public class Station extends Thread {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} finally { 
-			loggerStation.print(clockManager.getCurrentFrame()+": Station Beendet");
+			loggerStation.print(clockManager.getCurrentFrame()+"################################################## : Station Beendet");
 		}
 	}
 
 	private void sendingPhase() {
-//		byte freeSlot = this.messageManager.getFreeSlot();
-//		loggerStation.print(clockManager.getCurrentFrame()+": SendingPhase ("+freeSlot+")");
-//		this.resetFrame();
-//		Sender sender = new Sender(dataManager, messageManager, clockManager,
-//				multicastSocket, freeSlot, mcastAddress, receivePort,
-//				stationClass, loggerSender);
-//		sender.start();
+		byte freeSlot = this.messageManager.getFreeSlot();
+		loggerStation.print(clockManager.getCurrentFrame()+": [[[[[[[[[[[[[[[[SendingPhase]]]]]]]]]]]]]]]] ("+freeSlot+")");
+		this.resetFrame();
+		Sender sender = new Sender(dataManager, messageManager, clockManager,
+				multicastSocket, freeSlot, mcastAddress, receivePort,
+				stationClass, loggerSender);
+		sender.start();
 	}
 
 	private void listeningPhase() throws InterruptedException {
-		loggerStation.print(clockManager.getCurrentFrame()+": ListeningPhase");
+		loggerStation.print(clockManager.getCurrentFrame()+": [[[[[[[[[[[[[[[[ListeningPhase]]]]]]]]]]]]]]]] ");
 		do {
+			loggerStation.print(clockManager.getCurrentFrame()+": [[[[[[[[[[[[[[[[ListeningPhase]]]]]]]]]]]]]]]] 1");
 			Thread.sleep(this.clockManager.calcToNextFrameInMS());
 			messageManager.syncMessagesReceivedTime();
 		} while (!this.clockManager.isEOF());
 	}
 
 	private void startPhase() throws InterruptedException {
-		loggerStation.print(clockManager.getCurrentFrame()+": StartPhase");
+		loggerStation.print(clockManager.getCurrentFrame()+": [[[[[[[[[[[[[[[[StartPhase]]]]]]]]]]]]]]]] ");
 		do {
+			loggerStation.print(clockManager.getCurrentFrame()+": [[[[[[[[[[[[[[[[StartPhase]]]]]]]]]]]]]]]] 1");		
 			Thread.sleep(this.clockManager.calcToNextFrameInMS());
 			messageManager.syncMessagesReceivedTime();
 			if (this.clockManager.isEOF()) {
+				loggerStation.print(clockManager.getCurrentFrame()+": [[[[[[[[[[[[[[[[StartPhase]]]]]]]]]]]]]]]] 2");		
 				resetFrame();
 			}
 		} while (!this.clockManager.isEOF()
@@ -223,7 +232,5 @@ public class Station extends Thread {
 		new Station(paramInterfaceName, paramMcastAddress, paramReceivePort,
 				paramStationClass, paramUtcOffsetInMS).start();
 	}
-//}
-//S).start();
-//	}
+
 }

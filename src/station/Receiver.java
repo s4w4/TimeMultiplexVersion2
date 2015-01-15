@@ -1,5 +1,6 @@
 package station;
 
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.MulticastSocket;
@@ -24,8 +25,6 @@ public class Receiver extends Thread{
             try { 
             	//auf Nachricht warten
                 multicastSocket.receive(datagramPacket);   
-            	
-//                System.out.println("Receive: "+datagramPacket.toString());
                 this.messageManager.receivedMessage(new Message(byteArray));
             } catch (IOException e) {
                 e.printStackTrace();

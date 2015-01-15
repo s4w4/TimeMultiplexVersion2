@@ -1,5 +1,6 @@
 package station;
 
+
 public class DataManager {
 
 	private char[] dataBuffer;

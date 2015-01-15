@@ -1,5 +1,6 @@
 package station;
 
+
 import java.util.List;
 
 public class ClockManager {
@@ -21,10 +22,6 @@ public class ClockManager {
 	 */
 	private int slotCount = (int) (1000 / SLOT_TIME_IN_MS);
 
-	/**
-	 * Korrekturwert des letzten Slots
-	 */
-	private long correctionLastSlotInMS = 0;
 
 	/**
 	 * Anzahl aller A Station im aktuellen Frame
@@ -33,7 +30,10 @@ public class ClockManager {
 
 	private long frameStartDistance;
 
-	private boolean newFrame = false;
+	private long lastCorrectionInMs = 0;
+
+
+
 
 	public ClockManager(long utcOffsetInMS) {
 		this.correctionInMS = utcOffsetInMS;
@@ -45,8 +45,8 @@ public class ClockManager {
 	 * @return
 	 */
 	public boolean isEOF() {
-//		System.out.println(newFrame + " --- " + getCorrectedTimeInMS() + " ==== " + correctionInMS) ;
-		return newFrame;
+		System.out.println("############################################ ISEOF "+ frameStartDistance +" + " + (lastCorrectionInMs%1000)+ " >=0 "+(frameStartDistance + (lastCorrectionInMs%1000) >= 0));
+		return frameStartDistance + (correctionInMS%1000) >= 0;
 	}
 
 	/**
@@ -59,8 +59,8 @@ public class ClockManager {
 		return (byte) (((getCorrectedTimeInMS() % 1000) / SLOT_TIME_IN_MS) + 1);
 	}
 	
-	public byte getCorrectedSendingSlot(Message message) {
-		return (byte) (((message.getCorrectedTimeInMS() % 1000) / SLOT_TIME_IN_MS) + 1);
+	public byte getCurrentSendingSlot(Message currentMessage) {
+		return (byte) (((currentMessage.getReceivedTimeInMS() % 1000) / SLOT_TIME_IN_MS) + 1);
 	}
 
 	/**
@@ -70,7 +70,11 @@ public class ClockManager {
 	 * @return
 	 */
 	public long getCorrectedTimeInMS() {
-		return System.currentTimeMillis() + correctionInMS;
+		return currentTimeMillis() + correctionInMS;
+	}
+	
+	public long currentTimeMillis(){
+		return System.currentTimeMillis();
 	}
 
 	public int getSlotCount() {
@@ -94,25 +98,28 @@ public class ClockManager {
 	 * @param allReceivedMessage 
 	 */
 	public void sync(List<Message> allReceivedMessage) {
-		
+		countStations = 0; 
 		long timeDiffSum = 0; 
 		for (Message m : allReceivedMessage){
 			if ((m.getStationClass() == CLASS_A) && !m.isKollision()) {
+				System.out.println(m);
 				long sendtime = m.getSendTime(); 
-				long receivedTime = m.getCorrectedTimeInMS();
-				timeDiffSum += m.getCorrectedTimeInMS()-m.getSendTime();
-				this.countStations++; 				
+				long receivedTime = m.getReceivedTimeInMS();
+				timeDiffSum += sendtime-receivedTime;
+				System.out.println("ÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖ");
+				System.out.println("sendtime " + sendtime);
+				System.out.println("receivedTime " +receivedTime);
+				System.out.println("ÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖ clock sync " + timeDiffSum + " ÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖ");
+				countStations++; 				
 			}
 		}
-		
-		correctionInMS += timeDiffSum / (countStations == 0 ? 1 : countStations); 
-		
-		if (frameStartDistance - correctionInMS < 0 ){
-			newFrame = false; 
+		if (countStations == 0){
+			lastCorrectionInMs = timeDiffSum;
 		}else{
-			newFrame = true; 
+			lastCorrectionInMs = timeDiffSum / countStations;
 		}
-		
+		correctionInMS += lastCorrectionInMs; 
+
 	}
 
 	public boolean isStartFrame() {
@@ -124,8 +131,6 @@ public class ClockManager {
 	 */
 	public void resetFrame() {
 		this.countStations = 0;
-		this.correctionLastSlotInMS = 0;
-		this.newFrame = false; 
 		frameStartDistance = 0; 
 	}
 
@@ -146,12 +151,5 @@ public class ClockManager {
 		return correctionInMS;
 	}
 
-	/**
-	 * @param correctionInMS the correctionInMS to set
-	 */
-	public void setCorrectionInMS(long correctionInMS) {
-		this.correctionInMS = correctionInMS;
-	}
-	
 
 }

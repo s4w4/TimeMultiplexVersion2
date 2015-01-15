@@ -1,5 +1,6 @@
 package station;
 
+
 public enum PackageOrder {
 
 	/**

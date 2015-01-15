@@ -1,5 +1,6 @@
 package station;
 
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,13 +40,15 @@ public class Logger {
 	public void printMessages(List<Message> allReceivedMessage, long currentFrame, long correction) {
 		String text = ""; 
 		long currentTime = System.currentTimeMillis();
-		text += "=========================== "+currentFrame+" =:= "+currentTime+" ("+correction+"|"+(currentTime+correction)+")==============\n";
+		text += "================= F:"+currentFrame+" =:= Time"+currentTime+" (correction:"+correction+"|summe="+(currentTime+correction)+")\n";
 		for (Message message : new ArrayList<Message>(allReceivedMessage)) {
 			if (!message.isKollision()) 
 				text += message.toString()+"\n";
 			else
 				text += "<<<<< Kollision >>>>> "+message.toString()+"\n";
-		}
+		}	
+		text += "=====================================================================================================\n";
+
 		logger.info(text);
 	}
 	

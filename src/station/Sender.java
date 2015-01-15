@@ -1,5 +1,6 @@
 package station;
 
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
@@ -13,13 +14,13 @@ public class Sender extends Thread {
 	private MulticastSocket multicastSocket;
 	private byte sendingSlot;
 	private DatagramPacket datagramPacket;
-	private MessageManager1 messageManager;
+	private MessageManager messageManager;
 	private ClockManager clockManager;
 	private DataManager dataManager;
 	private char stationClass;
 	private Logger logger;
 
-	public Sender(DataManager dataManager, MessageManager1 messageManager,
+	public Sender(DataManager dataManager, MessageManager messageManager,
 			ClockManager clockManager, MulticastSocket multicastSocket,
 			byte sendingSlot, String multicastaddress, int port,
 			char stationClass, Logger logger) {
@@ -61,7 +62,7 @@ public class Sender extends Thread {
 				message.setData(data);
 				message.setReservedSlot(reserveredSlot);
 				message.setSendTime(clockManager.getCorrectedTimeInMS());
-				message.setStationTimeInMS(System.currentTimeMillis());
+				message.setReceivedTimeInMS(clockManager.currentTimeMillis());
 				message.setCurrentCorrection(clockManager.getCorrectionInMS());
 				datagramPacket.setData(message.toByteArray());
 
