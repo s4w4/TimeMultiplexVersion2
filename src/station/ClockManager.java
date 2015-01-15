@@ -45,7 +45,7 @@ public class ClockManager {
 	 * @return
 	 */
 	public boolean isEOF() {
-		System.out.println(newFrame + " --- " + getCorrectedTimeInMS() + " ==== " + correctionInMS) ;
+//		System.out.println(newFrame + " --- " + getCorrectedTimeInMS() + " ==== " + correctionInMS) ;
 		return newFrame;
 	}
 
@@ -59,8 +59,8 @@ public class ClockManager {
 		return (byte) (((getCorrectedTimeInMS() % 1000) / SLOT_TIME_IN_MS) + 1);
 	}
 	
-	public byte getCurrentSendingSlot(Message currentMessage) {
-		return (byte) (((currentMessage.getReceivedTimeInMS() % 1000) / SLOT_TIME_IN_MS) + 1);
+	public byte getCorrectedSendingSlot(Message message) {
+		return (byte) (((message.getCorrectedTimeInMS() % 1000) / SLOT_TIME_IN_MS) + 1);
 	}
 
 	/**
@@ -99,8 +99,8 @@ public class ClockManager {
 		for (Message m : allReceivedMessage){
 			if ((m.getStationClass() == CLASS_A) && !m.isKollision()) {
 				long sendtime = m.getSendTime(); 
-				long receivedTime = m.getReceivedTimeInMS();
-				timeDiffSum += m.getReceivedTimeInMS()-m.getSendTime();
+				long receivedTime = m.getCorrectedTimeInMS();
+				timeDiffSum += m.getCorrectedTimeInMS()-m.getSendTime();
 				this.countStations++; 				
 			}
 		}
@@ -146,5 +146,12 @@ public class ClockManager {
 		return correctionInMS;
 	}
 
+	/**
+	 * @param correctionInMS the correctionInMS to set
+	 */
+	public void setCorrectionInMS(long correctionInMS) {
+		this.correctionInMS = correctionInMS;
+	}
+	
 
 }

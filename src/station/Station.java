@@ -148,7 +148,7 @@ public class Station extends Thread {
 					}
 
 				} else {
-					messageManager.setReservedSlot((byte) 0);
+//					messageManager.setReservedSlot((byte) 0);
 					resetFrame();
 					startPhase();
 					// resetFrame();
@@ -168,13 +168,13 @@ public class Station extends Thread {
 	}
 
 	private void sendingPhase() {
-		byte freeSlot = this.messageManager.getFreeSlot();
-		loggerStation.print(clockManager.getCurrentFrame()+": SendingPhase ("+freeSlot+")");
-		this.resetFrame();
-		Sender sender = new Sender(dataManager, messageManager, clockManager,
-				multicastSocket, freeSlot, mcastAddress, receivePort,
-				stationClass, loggerSender);
-		sender.start();
+//		byte freeSlot = this.messageManager.getFreeSlot();
+//		loggerStation.print(clockManager.getCurrentFrame()+": SendingPhase ("+freeSlot+")");
+//		this.resetFrame();
+//		Sender sender = new Sender(dataManager, messageManager, clockManager,
+//				multicastSocket, freeSlot, mcastAddress, receivePort,
+//				stationClass, loggerSender);
+//		sender.start();
 	}
 
 	private void listeningPhase() throws InterruptedException {

@@ -7,6 +7,7 @@ import java.net.SocketAddress;
 import station.ClockManager;
 import station.Logger;
 import station.MessageManager;
+import station.MessageManager1;
 import station.Receiver;
 import station.Station;
 /**
@@ -28,7 +29,7 @@ public class App {
 
 		Logger logger = new Logger("Log");
 		ClockManager clockManager = new ClockManager(utcOffsetInMS);
-		MessageManager messageManager = new MessageManager(logger , clockManager);
+		MessageManager  messageManager = new MessageManager(logger , clockManager);
 		
 		Receiver r = new Receiver(multicastSocket, messageManager);
 		r.start();

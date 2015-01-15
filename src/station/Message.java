@@ -18,8 +18,8 @@ public class Message {
 	// Zeitstemple, wann Packet abgeschickt wurde
 	private long sendTime;
 	
-	private long receivedTimeInMS = 0;
-	private long correctedTimeAtThisTime = 0; 
+	private long stationTimeInMS = 0;
+	private long currentCorrectedTimeInMS = 0; 
 	
 	private byte[] messageInByteArray = new byte[BYTE_LENGTH];;
 	
@@ -130,23 +130,23 @@ public class Message {
 		for (int i=0; i <= 10; i++)
 			dataString += data[i]+"";
 		return "Message [ '"+ dataString + "', " + stationClass + ","
-				+ " r:" + reservedSlot + ", s:" + (byte) (((getReceivedTimeInMS() % 1000) / 40) + 1) + ", " + "TX:" + sendTime + "]";
+				+ " r:" + reservedSlot + ", s:" + (byte) (((getCorrectedTimeInMS() % 1000) / 40) + 1) + ", " + "TX:" + sendTime + "]";
 	}
 
 
 	/**
-	 * @return the receivedTimeInMS
+	 * @return the systemTimeInMS + correction
 	 */
-	public long getReceivedTimeInMS() {
-		return receivedTimeInMS + correctedTimeAtThisTime;
+	public long getCorrectedTimeInMS() {
+		return stationTimeInMS + currentCorrectedTimeInMS;
 	}
 
 
 	/**
-	 * @param receivedTimeInMS the receivedTimeInMS to set
+	 * @param stationTimeInMS the receivedTimeInMS to set
 	 */
-	public void setReceivedTimeInMS(long receivedTimeInMS) {
-		this.receivedTimeInMS = receivedTimeInMS;
+	public void setStationTimeInMS(long stationTimeInMS) {
+		this.stationTimeInMS = stationTimeInMS;
 	}
 
 
@@ -203,12 +203,12 @@ public class Message {
 
 
 	public long getCorrectedTimeAtThisTime() {
-		return correctedTimeAtThisTime;
+		return currentCorrectedTimeInMS;
 	}
 
 
 	public void setCurrentCorrection(long correctedTimeAtThisTime) {
-		this.correctedTimeAtThisTime = correctedTimeAtThisTime;
+		this.currentCorrectedTimeInMS = correctedTimeAtThisTime;
 	}
 	
 }
