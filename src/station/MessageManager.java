@@ -52,6 +52,8 @@ public class MessageManager {
 	public void receivedMessage(Message currentMessage) {
 		allReceivedMessage.add(currentMessage);
 		currentMessage.setSendingSlot(this.clockManager.getCurrentSlot());
+		currentMessage.setReceivedTimeInMS(clockManager.getCorrectedTimeInMS());
+		
 //		System.out.println("************* RECEIVED "+allReceivedMessage.size());		
 		if (lastMessage != null && isKollision(currentMessage)) {
 			handleKollision(currentMessage);
@@ -169,6 +171,12 @@ public class MessageManager {
 	 */
 	public void setReservedSlot(byte reservedSlot) {
 		this.reservedSlot = reservedSlot;
+	}
+
+	public void syncReceivedMessages() {
+		for (int i = 0; i < allReceivedMessage.size(); i++) {
+			//TODO: 
+		}
 	}
 
 }

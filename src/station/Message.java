@@ -17,6 +17,9 @@ public class Message {
 	private byte reservedSlot; 
 	// Zeitstemple, wann Packet abgeschickt wurde
 	private long sendTime;
+	
+	private long receivedTimeInMS = 0;
+	
 	private byte[] messageInByteArray = new byte[BYTE_LENGTH];;
 	
 	private byte sendingSlot;
@@ -143,6 +146,22 @@ public class Message {
 			dataString += data[i]+"";
 		return "Message [ '"+ dataString + "', " + stationClass + ","
 				+ " r:" + reservedSlot + ", s:" + sendingSlot + ", " + "TX:" + sendTime + "]";
+	}
+
+
+	/**
+	 * @return the receivedTimeInMS
+	 */
+	public long getReceivedTimeInMS() {
+		return receivedTimeInMS;
+	}
+
+
+	/**
+	 * @param receivedTimeInMS the receivedTimeInMS to set
+	 */
+	public void setReceivedTimeInMS(long receivedTimeInMS) {
+		this.receivedTimeInMS = receivedTimeInMS;
 	}
 	
 
