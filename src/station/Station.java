@@ -188,7 +188,7 @@ public class Station extends Thread {
 		do {
 			Thread.sleep(this.clockManager.calcToNextFrameInMS());
 			this.clockManager.sync();
-			// TODO: messageManager.syncReceivedMessages();
+//			messageManager.syncReceivedMessages();
 			if (this.clockManager.isEOF()) {
 				resetFrame();
 			}

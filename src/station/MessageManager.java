@@ -175,7 +175,7 @@ public class MessageManager {
 
 	public void syncReceivedMessages() {
 		for (int i = 0; i < allReceivedMessage.size(); i++) {
-			//TODO: 
+			//TODO:  
 		}
 	}
 
