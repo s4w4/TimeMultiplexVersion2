@@ -142,7 +142,8 @@ public class Station extends Thread {
 						loggerStation.print(clockManager.getCurrentFrame()+": OwnKollision OR NoFreeSlotsInNextFrame");
 						resetFrame();
 					} else {
-						sendingPhase();
+						if (!this.messageManager.isOwnMessageSended())
+							sendingPhase();
 					}
 
 				} else {
@@ -180,6 +181,7 @@ public class Station extends Thread {
 		do {
 			Thread.sleep(this.clockManager.calcToNextFrameInMS());
 			this.clockManager.sync();
+			messageManager.syncMessagesReceivedTime();
 		} while (!this.clockManager.isEOF());
 	}
 
@@ -188,7 +190,7 @@ public class Station extends Thread {
 		do {
 			Thread.sleep(this.clockManager.calcToNextFrameInMS());
 			this.clockManager.sync();
-//			messageManager.syncReceivedMessages();
+			messageManager.syncMessagesReceivedTime();
 			if (this.clockManager.isEOF()) {
 				resetFrame();
 			}
@@ -222,4 +224,7 @@ public class Station extends Thread {
 		new Station(paramInterfaceName, paramMcastAddress, paramReceivePort,
 				paramStationClass, paramUtcOffsetInMS).start();
 	}
+//}
+//S).start();
+//	}
 }

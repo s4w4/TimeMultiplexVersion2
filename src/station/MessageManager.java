@@ -1,8 +1,10 @@
 package station;
 
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
@@ -10,13 +12,6 @@ public class MessageManager {
 
 	private Logger logger;
 	private ClockManager clockManager;
-	/**
-	 * Slot an dem zuletzt im aktuellen Frame eine Nachricht empfangen wurde
-	 * 
-	 * !!! 0 = Es wurden noch keine Nachrichten im aktuellen Frame empfangen
-	 */
-	private byte lastReceivedSlot = 0;
-	private Message lastMessage;
 	private List<Byte> freeSlots;
 	private List<Message> allReceivedMessage;
 	private Random random;
@@ -30,6 +25,25 @@ public class MessageManager {
 		this.freeSlots = resetFreeSlots(clockManager.getSlotCount());
 		this.random = new Random();
 	}
+
+	public void resetFrame() {
+		this.freeSlots = resetFreeSlots(clockManager.getSlotCount());
+		resetAllMessageFromOldFrame(); 					
+		this.ownMessage = null;
+	}
+	
+	private void resetAllMessageFromOldFrame() {
+		ArrayList<Message> messagesToPrint = new ArrayList<Message>();
+		for (Message m : allReceivedMessage){
+			if (m.isOldFrame()){
+				messagesToPrint.add(m);
+				allReceivedMessage.remove(m);
+				freeSlots.remove((Byte) m.getReservedSlot()); 
+			}
+		}
+		logger.printMessages(messagesToPrint, clockManager.getCurrentFrame()-1, clockManager.getCorrectionInMS());
+	}
+	
 
 	/**
 	 * erstellt eine Liste mit freien Slots
@@ -50,77 +64,71 @@ public class MessageManager {
 	 * @param currentMessage
 	 */
 	public void receivedMessage(Message currentMessage) {
+		currentMessage.setReceivedTimeInMS(System.currentTimeMillis());
+		currentMessage.setCurrentCorrection(clockManager.getCorrectedTimeInMS());
+		checkOwnMessage(currentMessage);
 		allReceivedMessage.add(currentMessage);
-		currentMessage.setSendingSlot(this.clockManager.getCurrentSlot());
-		currentMessage.setReceivedTimeInMS(clockManager.getCorrectedTimeInMS());
-		
-//		System.out.println("************* RECEIVED "+allReceivedMessage.size());		
-		if (lastMessage != null && isKollision(currentMessage)) {
-			handleKollision(currentMessage);
-		} else {
-			freeSlots.remove((Byte) currentMessage.getReservedSlot());
-			this.clockManager.calcCorrection(currentMessage);
-		}
-
-		this.lastMessage = currentMessage;
 	}
-
+	private void checkOwnMessage(Message m){
+		if (this.ownMessage != null)
+			if(this.clockManager.getCurrentSendingSlot(m) == this.clockManager.getCurrentSendingSlot(ownMessage)) {
+				m.setOwnMessage(true);
+			}else{
+				m.setOwnMessage(false);
+		}
+	}
+	
 	/**
 	 * Kollisionbehandlung
 	 * 
 	 * @param currentMessage
 	 */
-	private void handleKollision(Message currentMessage) {
-//		System.out.println("HANDLE KOLLISION "
-//				+ currentMessage.getSendingSlot() + " : "
-//				+ lastMessage.getSendingSlot());
-		int index = allReceivedMessage.size();
-		allReceivedMessage.get(index - 1).setKollision(true);
-		allReceivedMessage.get(index - 2).setKollision(true);
-
-		if (!lastMessage.isKollision()) {
-			this.freeSlots.add(lastMessage.getReservedSlot());
-			this.clockManager.rollbackLastCorrection(lastMessage);
+	private void handleKollision() {
+		if (allReceivedMessage.size() > 1)
+			for (int i = 0; i < allReceivedMessage.size()-1; i++){
+				Message m1 = allReceivedMessage.get(i);
+				Message m2 = allReceivedMessage.get(i+1);
+				if (this.clockManager.getCurrentSendingSlot(m1) == this.clockManager.getCurrentSendingSlot(m2)){
+					m1.setKollision(true);
+					m2.setKollision(true);
+				}
+			}
+	}
+	
+	public void syncMessagesReceivedTime(){
+		for (Message m : allReceivedMessage){
+			m.setCurrentCorrection(clockManager.getCorrectionInMS());
+			if (clockManager.getCurrentFrame() > clockManager.getFrame(m.getReceivedTimeInMS())){
+				m.setOldFrame(true);
+			} else {
+				m.setOldFrame(false);
+			}
+			checkOwnMessage(m);
 		}
-		lastMessage.setKollision(true);
-		currentMessage.setKollision(true);
-
-		if (this.ownMessage != null
-				&& currentMessage.getSendingSlot() == this.ownMessage
-						.getSendingSlot()) {
-			this.ownMessage.setKollision(true);
-		}
-
+		handleKollision();
 	}
 
 	/**
-	 * prüft ob aktuelle Nachricht kollidiert
+	 * prüft ob eigene Nachricht kollidiert
 	 * 
 	 * @param currentMessage
 	 * @return
 	 */
-	private boolean isKollision(Message currentMessage) {
-		boolean kollision = lastMessage.getSendingSlot() == currentMessage
-				.getSendingSlot();
-		return kollision;
-	}
-
-	public void resetFrame() {
-//		System.out.println("==================================================================================");
-		this.freeSlots = resetFreeSlots(clockManager.getSlotCount());
-		logger.printMessages(allReceivedMessage, clockManager.getCurrentFrame()-1, clockManager.getCorrectionInMS());
-		this.allReceivedMessage = new ArrayList<Message>();
-		this.ownMessage = null;
-		this.lastMessage = null;
-	}
-
 	public boolean isOwnKollision() {
-		if (this.ownMessage == null) {
-			return false;
-		}
-		return this.ownMessage.isKollision();
+		boolean isOwnMessageKollision = false; 
+		for (Message m : allReceivedMessage)
+			if (m.isOwnMessage() && m.isKollision())
+				isOwnMessageKollision = true; 
+		return isOwnMessageKollision;
 	}
-
+	public boolean isOwnMessageSended() {
+		boolean OwnMessageSended = false; 
+		for (Message m : allReceivedMessage)
+			if (m.isOwnMessage())
+				OwnMessageSended = true; 
+		return OwnMessageSended;
+	}
+	
 	/**
 	 * @param ownMessage
 	 *            the ownMessage to set
@@ -139,17 +147,16 @@ public class MessageManager {
 	}
 
 	/**
-	 * Waehlt einen freien zufaelligen Slot aus
+	 * Waehlt einen freien zufaelligen Slot aus 
+	 * oder gibt reservierte Slot zurück, wenn es existiert
 	 * 
 	 * @return
 	 */
 	public byte getFreeSlot() {
 		if (this.reservedSlot > 0) {
-//			System.out.println("RESERVED SLOT : " + reservedSlot);
 			return reservedSlot;
 		} else {
 			byte cS = calcNewSlot();
-//			System.out.println("CALC SLOT: " + cS);
 			return cS;
 		}
 	}
@@ -172,11 +179,7 @@ public class MessageManager {
 	public void setReservedSlot(byte reservedSlot) {
 		this.reservedSlot = reservedSlot;
 	}
-
-	public void syncReceivedMessages() {
-		for (int i = 0; i < allReceivedMessage.size(); i++) {
-			//TODO:  
-		}
-	}
+	
+	
 
 }

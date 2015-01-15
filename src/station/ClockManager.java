@@ -60,9 +60,14 @@ public class ClockManager {
 	 * liefert aktuellen Slot
 	 * 
 	 * Slot beginnt bei 1
+	 * @param currentMessage 
 	 */
 	public byte getCurrentSlot() {
 		return (byte) (((getCorrectedTimeInMS() % 1000) / SLOT_TIME_IN_MS) + 1);
+	}
+	
+	public byte getCurrentSendingSlot(Message currentMessage) {
+		return (byte) (((currentMessage.getReceivedTimeInMS() % 1000) / SLOT_TIME_IN_MS) + 1);
 	}
 
 	/**
@@ -160,12 +165,15 @@ public class ClockManager {
 	public long getCurrentFrame() {
 		return getCorrectedTimeInMS() / 1000;
 	}
-
+	public long getFrame(long time) {
+		return time / 1000;
+	}
 	/**
 	 * @return the correctionInMS
 	 */
 	public long getCorrectionInMS() {
 		return correctionInMS;
 	}
+
 
 }

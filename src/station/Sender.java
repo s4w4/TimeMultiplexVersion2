@@ -60,8 +60,9 @@ public class Sender extends Thread {
 				Message message = new Message(this.stationClass);
 				message.setData(data);
 				message.setReservedSlot(reserveredSlot);
-				message.setSendingSlot(sendingSlot);
-				message.setSendTime(this.clockManager.getCorrectedTimeInMS());
+				message.setSendTime(clockManager.getCorrectedTimeInMS());
+				message.setReceivedTimeInMS(System.currentTimeMillis());
+				message.setCurrentCorrection(clockManager.getCorrectionInMS());
 				datagramPacket.setData(message.toByteArray());
 
 				// zeit prüfen

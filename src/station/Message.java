@@ -19,11 +19,14 @@ public class Message {
 	private long sendTime;
 	
 	private long receivedTimeInMS = 0;
+	private long correctedTimeAtThisTime = 0; 
 	
 	private byte[] messageInByteArray = new byte[BYTE_LENGTH];;
 	
-	private byte sendingSlot;
+//	private byte sendingSlot;
 	private boolean kollision = false;
+	private boolean ownMessage = false;
+	private boolean oldFrame = false; 
 	
 	public Message(char stationClass) {
 		super();
@@ -48,20 +51,20 @@ public class Message {
 	}
 	
 	
-	/**
-	 * @return the sendingSlot
-	 */
-	public byte getSendingSlot() {
-		return sendingSlot;
-	}
-
-
-	/**
-	 * @param sendingSlot the sendingSlot to set
-	 */
-	public void setSendingSlot(byte sendingSlot) {
-		this.sendingSlot = sendingSlot;
-	}
+//	/**
+//	 * @return the sendingSlot
+//	 */
+//	public byte getSendingSlot() {
+//		return sendingSlot;
+//	}
+//
+//
+//	/**
+//	 * @param sendingSlot the sendingSlot to set
+//	 */
+//	public void setSendingSlot(byte sendingSlot) {
+//		this.sendingSlot = sendingSlot;
+//	}
 
 
 	/**
@@ -145,7 +148,7 @@ public class Message {
 		for (int i=0; i <= 10; i++)
 			dataString += data[i]+"";
 		return "Message [ '"+ dataString + "', " + stationClass + ","
-				+ " r:" + reservedSlot + ", s:" + sendingSlot + ", " + "TX:" + sendTime + "]";
+				+ " r:" + reservedSlot + ", s:" + (byte) (((getReceivedTimeInMS() % 1000) / 40) + 1) + ", " + "TX:" + sendTime + "]";
 	}
 
 
@@ -153,7 +156,7 @@ public class Message {
 	 * @return the receivedTimeInMS
 	 */
 	public long getReceivedTimeInMS() {
-		return receivedTimeInMS;
+		return receivedTimeInMS + correctedTimeAtThisTime;
 	}
 
 
@@ -163,6 +166,73 @@ public class Message {
 	public void setReceivedTimeInMS(long receivedTimeInMS) {
 		this.receivedTimeInMS = receivedTimeInMS;
 	}
+
+
+	public void setOwnMessage(boolean b) {
+		this.ownMessage = b; 
+	}
+
+	public boolean isOwnMessage() {
+		return ownMessage;
+	}
+
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(data);
+		result = prime * result + reservedSlot;
+		result = prime * result + (int) (sendTime ^ (sendTime >>> 32));
+		result = prime * result + stationClass;
+		return result;
+	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Message other = (Message) obj;
+		if (!Arrays.equals(data, other.data))
+			return false;
+		if (reservedSlot != other.reservedSlot)
+			return false;
+		if (sendTime != other.sendTime)
+			return false;
+		if (stationClass != other.stationClass)
+			return false;
+		return true;
+	}
+
+
+	public boolean isOldFrame() {
+		return oldFrame;
+	}
+
+
+	public void setOldFrame(boolean oldFrame) {
+		this.oldFrame = oldFrame;
+	}
+
+
+	public long getCorrectedTimeAtThisTime() {
+		return correctedTimeAtThisTime;
+	}
+
+
+	public void setCurrentCorrection(long correctedTimeAtThisTime) {
+		this.correctedTimeAtThisTime = correctedTimeAtThisTime;
+	}
+
+
+
+
+	
 	
 
 	
