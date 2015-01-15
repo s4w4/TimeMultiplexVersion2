@@ -353,10 +353,10 @@ public class MessageManagerTest2 {
 		messageManager.syncMessagesReceivedTime();
 		messageManager.resetFrame();
 
-		System.out.println(Arrays.toString(messageManager.getFreeSlots()
-				.toArray()));
-
-		assertFalse(messageManager.isFreeSlotNextFrame());
+		// System.out.println(Arrays.toString(messageManager.getFreeSlots()
+		// .toArray()));
+		Byte[] expandArr1 = { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25};
+		assertEquals(expandArr1, messageManager.getFreeSlots().toArray());
 	}
 
 	@Test
@@ -378,7 +378,7 @@ public class MessageManagerTest2 {
 
 	@Test
 	public void testIsFreeSlotNextFrame3() throws InterruptedException {
-		Thread.sleep(this.clockManager.calcToNextFrameInMS()-40);
+		Thread.sleep(this.clockManager.calcToNextFrameInMS() - 40);
 		messageManager.receivedMessage(createMessage((byte) (1)));
 		Thread.sleep(40);
 		messageManager.receivedMessage(createMessage((byte) (2)));
@@ -386,22 +386,23 @@ public class MessageManagerTest2 {
 		messageManager.syncMessagesReceivedTime();
 		messageManager.resetFrame();
 
-//		System.out.println(Arrays.toString(messageManager.getFreeSlots()
-//				.toArray()));
-		Byte[] expandArr1 = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25};
+		// System.out.println(Arrays.toString(messageManager.getFreeSlots()
+		// .toArray()));
+		Byte[] expandArr1 = { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+				16, 17, 18, 19, 20, 21, 22, 23, 24, 25 };
 		assertEquals(expandArr1, messageManager.getFreeSlots().toArray());
-		
+
 		Thread.sleep(this.clockManager.calcToNextFrameInMS());
 		messageManager.syncMessagesReceivedTime();
 		messageManager.resetFrame();
-//		System.out.println(Arrays.toString(messageManager.getFreeSlots()
-//				.toArray()));
-		Byte[] expandArr2 = {1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25};
-		assertEquals(expandArr2, messageManager.getFreeSlots().toArray()); 
-		
-		
+		// System.out.println(Arrays.toString(messageManager.getFreeSlots()
+		// .toArray()));
+		Byte[] expandArr2 = { 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+				16, 17, 18, 19, 20, 21, 22, 23, 24, 25 };
+		assertEquals(expandArr2, messageManager.getFreeSlots().toArray());
+
 	}
-	
+
 	private Message createMessage(byte reserveredSlot) {
 
 		char[] data = new char[24];
