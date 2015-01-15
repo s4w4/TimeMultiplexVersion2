@@ -47,26 +47,8 @@ public class Message {
 		reservedSlot = (byte) this.messageInByteArray[RESERVED_SLOT.from()]; 
 					
 		sendTime = ByteBuffer.wrap(this.messageInByteArray, SEND_TIME.from(), SEND_TIME.length()).asLongBuffer().get(); 
-		
 	}
 	
-	
-//	/**
-//	 * @return the sendingSlot
-//	 */
-//	public byte getSendingSlot() {
-//		return sendingSlot;
-//	}
-//
-//
-//	/**
-//	 * @param sendingSlot the sendingSlot to set
-//	 */
-//	public void setSendingSlot(byte sendingSlot) {
-//		this.sendingSlot = sendingSlot;
-//	}
-
-
 	/**
 	 * @return the kollision
 	 */
@@ -228,12 +210,5 @@ public class Message {
 	public void setCurrentCorrection(long correctedTimeAtThisTime) {
 		this.correctedTimeAtThisTime = correctedTimeAtThisTime;
 	}
-
-
-
-
-	
-	
-
 	
 }

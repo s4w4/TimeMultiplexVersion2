@@ -142,8 +142,9 @@ public class Station extends Thread {
 						loggerStation.print(clockManager.getCurrentFrame()+": OwnKollision OR NoFreeSlotsInNextFrame");
 						resetFrame();
 					} else {
-						if (!this.messageManager.isOwnMessageSended())
+						if (!this.messageManager.isOwnMessageSended()){
 							sendingPhase();
+						}
 					}
 
 				} else {

@@ -34,7 +34,8 @@ public class MessageManager {
 	
 	private void resetAllMessageFromOldFrame() {
 		ArrayList<Message> messagesToPrint = new ArrayList<Message>();
-		for (Message m : allReceivedMessage){
+		ArrayList<Message> tmpMessage = new ArrayList<Message>(allReceivedMessage);
+		for (Message m : tmpMessage){
 			if (m.isOldFrame()){
 				messagesToPrint.add(m);
 				allReceivedMessage.remove(m);
@@ -65,7 +66,7 @@ public class MessageManager {
 	 */
 	public void receivedMessage(Message currentMessage) {
 		currentMessage.setReceivedTimeInMS(System.currentTimeMillis());
-		currentMessage.setCurrentCorrection(clockManager.getCorrectedTimeInMS());
+		currentMessage.setCurrentCorrection(clockManager.getCorrectionInMS());
 		checkOwnMessage(currentMessage);
 		allReceivedMessage.add(currentMessage);
 	}

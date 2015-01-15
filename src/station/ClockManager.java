@@ -22,11 +22,6 @@ public class ClockManager {
 	private int slotCount = (int) (1000 / SLOT_TIME_IN_MS);
 
 	/**
-	 * Summe aller Korrekturwerte im aktuellen Frame
-	 */
-	private long sumCorrectionInMS = 0;
-
-	/**
 	 * Korrekturwert des letzten Slots
 	 */
 	private long correctionLastSlotInMS = 0;
@@ -35,16 +30,6 @@ public class ClockManager {
 	 * Anzahl aller A Station im aktuellen Frame
 	 */
 	private int countStations = 0;
-
-	/**
-	 * Korrekturwert des aktuellen Frames
-	 */
-	private long correctionLastFrameInMS = 0;
-
-	private boolean flagClockBack = false;
-	private boolean flagNewPackage = false;
-
-	private long lastFrame;
 
 	private long frameStartDistance;
 
@@ -60,8 +45,7 @@ public class ClockManager {
 	 * @return
 	 */
 	public boolean isEOF() {
-//		System.out.println("\t" + correctionLastFrameInMS);
-		System.out.println(newFrame + " --- " + getCorrectedTimeInMS());
+		System.out.println(newFrame + " --- " + getCorrectedTimeInMS() + " ==== " + correctionInMS) ;
 		return newFrame;
 	}
 
@@ -94,40 +78,6 @@ public class ClockManager {
 	}
 
 	/**
-	 * Berechnet neue Korrektur
-	 * 
-	 * @param message
-	 */
-	public void calcCorrection(Message message) {
-		if (message.getStationClass() == CLASS_A) {
-			this.correctionLastSlotInMS = message.getSendTime()
-					- getCorrectedTimeInMS();
-			this.sumCorrectionInMS += correctionLastSlotInMS;
-			this.countStations++;
-			if (flagClockBack) {
-				flagNewPackage = true;
-			}
-		}
-
-	}
-
-	/**
-	 * Bei Kollision wird die letzte Korrektur zurückgesetzt
-	 * 
-	 * @param message
-	 */
-	public void rollbackLastCorrection(Message message) {
-		if (message.getStationClass() == CLASS_A) {
-			this.countStations--;
-			this.sumCorrectionInMS -= correctionLastSlotInMS;
-			this.correctionLastSlotInMS = 0;
-			if (flagClockBack) {
-				flagNewPackage = false;
-			}
-		}
-	}
-
-	/**
 	 * Berechnet die Zeit wie lange es noch bis zum ende des Frames dauert in
 	 * Millisekunden
 	 * 
@@ -147,7 +97,9 @@ public class ClockManager {
 		
 		long timeDiffSum = 0; 
 		for (Message m : allReceivedMessage){
-			if (m.getStationClass() == CLASS_A) {
+			if ((m.getStationClass() == CLASS_A) && !m.isKollision()) {
+				long sendtime = m.getSendTime(); 
+				long receivedTime = m.getReceivedTimeInMS();
 				timeDiffSum += m.getReceivedTimeInMS()-m.getSendTime();
 				this.countStations++; 				
 			}
@@ -161,14 +113,6 @@ public class ClockManager {
 			newFrame = true; 
 		}
 		
-//		if (flagClockBack && !flagNewPackage) {
-//			this.correctionLastFrameInMS = 0;
-//		} else {
-//			this.correctionLastFrameInMS = this.sumCorrectionInMS
-//					/ (this.countStations == 0 ? 1 : this.countStations);
-//			this.flagClockBack = correctionLastFrameInMS < 0;
-//			this.correctionInMS += correctionLastFrameInMS;
-//		}
 	}
 
 	public boolean isStartFrame() {
@@ -180,12 +124,9 @@ public class ClockManager {
 	 */
 	public void resetFrame() {
 		this.countStations = 0;
-		this.sumCorrectionInMS = 0;
-		this.correctionLastFrameInMS = 0;
 		this.correctionLastSlotInMS = 0;
-		this.flagClockBack = false;
-		this.flagNewPackage = false;
 		this.newFrame = false; 
+		frameStartDistance = 0; 
 	}
 
 	public long calcTimeUntilSlotInMS(byte slot) {
