@@ -180,7 +180,6 @@ public class Station extends Thread {
 		loggerStation.print(clockManager.getCurrentFrame()+": ListeningPhase");
 		do {
 			Thread.sleep(this.clockManager.calcToNextFrameInMS());
-			this.clockManager.sync();
 			messageManager.syncMessagesReceivedTime();
 		} while (!this.clockManager.isEOF());
 	}
@@ -189,7 +188,6 @@ public class Station extends Thread {
 		loggerStation.print(clockManager.getCurrentFrame()+": StartPhase");
 		do {
 			Thread.sleep(this.clockManager.calcToNextFrameInMS());
-			this.clockManager.sync();
 			messageManager.syncMessagesReceivedTime();
 			if (this.clockManager.isEOF()) {
 				resetFrame();

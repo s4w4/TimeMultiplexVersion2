@@ -1,5 +1,7 @@
 package station;
 
+import java.util.List;
+
 public class ClockManager {
 
 	private final char CLASS_A = 'A';
@@ -42,6 +44,12 @@ public class ClockManager {
 	private boolean flagClockBack = false;
 	private boolean flagNewPackage = false;
 
+	private long lastFrame;
+
+	private long frameStartDistance;
+
+	private boolean newFrame = false;
+
 	public ClockManager(long utcOffsetInMS) {
 		this.correctionInMS = utcOffsetInMS;
 
@@ -53,7 +61,8 @@ public class ClockManager {
 	 */
 	public boolean isEOF() {
 //		System.out.println("\t" + correctionLastFrameInMS);
-		return correctionLastFrameInMS >= 0;
+		System.out.println(newFrame + " --- " + getCorrectedTimeInMS());
+		return newFrame;
 	}
 
 	/**
@@ -125,21 +134,41 @@ public class ClockManager {
 	 * @return
 	 */
 	public long calcToNextFrameInMS() {
+		this.frameStartDistance = getCorrectedTimeInMS() - getCurrentFrame() * 1000;
 		return 1000 - (getCorrectedTimeInMS() % 1000);
 	}
+	
 
 	/**
 	 * Synchronisiert Korregierte Stationszeit
+	 * @param allReceivedMessage 
 	 */
-	public void sync() {
-		if (flagClockBack && !flagNewPackage) {
-			this.correctionLastFrameInMS = 0;
-		} else {
-			this.correctionLastFrameInMS = this.sumCorrectionInMS
-					/ (this.countStations == 0 ? 1 : this.countStations);
-			this.flagClockBack = correctionLastFrameInMS < 0;
-			this.correctionInMS += correctionLastFrameInMS;
+	public void sync(List<Message> allReceivedMessage) {
+		
+		long timeDiffSum = 0; 
+		for (Message m : allReceivedMessage){
+			if (m.getStationClass() == CLASS_A) {
+				timeDiffSum += m.getReceivedTimeInMS()-m.getSendTime();
+				this.countStations++; 				
+			}
 		}
+		
+		correctionInMS += timeDiffSum / (countStations == 0 ? 1 : countStations); 
+		
+		if (frameStartDistance - correctionInMS < 0 ){
+			newFrame = false; 
+		}else{
+			newFrame = true; 
+		}
+		
+//		if (flagClockBack && !flagNewPackage) {
+//			this.correctionLastFrameInMS = 0;
+//		} else {
+//			this.correctionLastFrameInMS = this.sumCorrectionInMS
+//					/ (this.countStations == 0 ? 1 : this.countStations);
+//			this.flagClockBack = correctionLastFrameInMS < 0;
+//			this.correctionInMS += correctionLastFrameInMS;
+//		}
 	}
 
 	public boolean isStartFrame() {
@@ -156,6 +185,7 @@ public class ClockManager {
 		this.correctionLastSlotInMS = 0;
 		this.flagClockBack = false;
 		this.flagNewPackage = false;
+		this.newFrame = false; 
 	}
 
 	public long calcTimeUntilSlotInMS(byte slot) {
