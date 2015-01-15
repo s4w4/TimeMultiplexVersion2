@@ -5,8 +5,8 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import station.ClockManager;
-import station.Logger;
-import station.MessageManager1;
+import station.Logger; 
+import station.MessageManager;
 
 public class ClockManagerTest {
 
@@ -33,7 +33,7 @@ public class ClockManagerTest {
 	@Test
 	public void testIsEOF() {
 		try {
-			MessageManager1 mm = new MessageManager1(new Logger("test"), clockManager);
+			MessageManager  mm = new MessageManager(new Logger("test"), clockManager);
 			long resTime = clockManager.calcToNextFrameInMS(); 
 			long frameOld = clockManager.getFrame(System.currentTimeMillis());
 			Thread.sleep(resTime);

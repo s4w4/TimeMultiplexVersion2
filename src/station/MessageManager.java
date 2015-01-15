@@ -156,6 +156,42 @@ public class MessageManager {
 		this.ownMessage = ownMessage;
 	}
 
+	
+	/**
+	 * @return the freeSlots
+	 */
+	public List<Byte> getFreeSlots() {
+		return freeSlots;
+	}
+
+	/**
+	 * @param freeSlots the freeSlots to set
+	 */
+	public void setFreeSlots(List<Byte> freeSlots) {
+		this.freeSlots = freeSlots;
+	}
+
+	/**
+	 * @return the allReceivedMessage
+	 */
+	public List<Message> getAllReceivedMessage() {
+		return allReceivedMessage;
+	}
+
+	/**
+	 * @param allReceivedMessage the allReceivedMessage to set
+	 */
+	public void setAllReceivedMessage(List<Message> allReceivedMessage) {
+		this.allReceivedMessage = allReceivedMessage;
+	}
+
+	/**
+	 * @return the ownMessage
+	 */
+	public Message getOwnMessage() {
+		return ownMessage;
+	}
+
 	/**
 	 * prüft ob es noch es noch freie Slots gibt
 	 * 

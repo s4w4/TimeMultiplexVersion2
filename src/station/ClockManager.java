@@ -151,5 +151,13 @@ public class ClockManager {
 		return correctionInMS;
 	}
 
+	/**
+	 * @param correctionInMS the correctionInMS to set
+	 */
+	public void setCorrectionInMS(long correctionInMS) {
+		this.correctionInMS = correctionInMS;
+	}
+	
+
 
 }
