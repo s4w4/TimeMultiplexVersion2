@@ -178,6 +178,7 @@ public class Station extends Thread {
 	private void startPhase() throws InterruptedException {
 		do {
 			Thread.sleep(this.clockManager.calcToNextFrameInMS());
+			
 			this.clockManager.sync();			
 			if (this.clockManager.isEOF()) {
 				resetFrame();

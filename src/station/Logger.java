@@ -42,11 +42,11 @@ public class Logger {
 		text += "=========================== "+currentFrame+" =:= "+currentTime+" ("+correction+"|"+(currentTime+correction)+")==============\n";
 		for (Message message : new ArrayList<Message>(allReceivedMessage)) {
 			if (!message.isKollision()) 
-				text += message.toString();
+				text += message.toString()+"\n";
 			else
-				text += "<<<<< Kollision >>>>> "+message.toString();
+				text += "<<<<< Kollision >>>>> "+message.toString()+"\n";
 		}
-		logger.info(text+"\n");
+		logger.info(text);
 	}
 	
 	public void printMessage(Message message, long frame) {
