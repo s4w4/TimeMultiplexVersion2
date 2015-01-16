@@ -31,7 +31,8 @@ public class ClockManager {
 	private long frameStartDistance;
 
 	private long lastCorrectionInMs = 0;
-
+	
+	private long currentFrame = 0; 
 
 
 
@@ -46,7 +47,7 @@ public class ClockManager {
 	 */
 	public boolean isEOF() {
 		System.out.println("############################################ ISEOF "+ frameStartDistance +" + " + (lastCorrectionInMs%1000)+ " >=0 "+(frameStartDistance + (lastCorrectionInMs%1000) >= 0));
-		return frameStartDistance + (correctionInMS%1000) >= 0;
+		return getCurrentSlot() == 1;//frameStartDistance + (correctionInMS%1000) >= 0;
 	}
 
 	/**
@@ -106,10 +107,6 @@ public class ClockManager {
 				long sendtime = m.getSendTime(); 
 				long receivedTime = m.getReceivedTimeInMS();
 				timeDiffSum += sendtime-receivedTime;
-				System.out.println("ÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖ");
-				System.out.println("sendtime " + sendtime);
-				System.out.println("receivedTime " +receivedTime);
-				System.out.println("ÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖ clock sync " + timeDiffSum + " ÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖ");
 				countStations++; 				
 			}
 		}

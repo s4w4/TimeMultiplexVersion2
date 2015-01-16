@@ -159,8 +159,9 @@ public class Station extends Thread {
 					resetFrame();
 					startPhase();
 				}
-				loggerStation.print(clockManager.getCurrentFrame()+"################################################## : hauptwhlie finish ");
 				listeningPhase();
+				loggerStation.print(clockManager.getCurrentFrame()+"################################################## : hauptwhlie finish ");
+
 
 			} while (!finish);
 
@@ -184,10 +185,11 @@ public class Station extends Thread {
 	}
 
 	private void listeningPhase() throws InterruptedException {
-		loggerStation.print(clockManager.getCurrentFrame()+": [[[[[[[[[[[[[[[[ListeningPhase]]]]]]]]]]]]]]]] ");
+		loggerStation.print(clockManager.getCurrentFrame()+": [[[[[[[[[[[[[[[[ListeningPhase]]]]]]]]]]]]]]]] start");
 		do {
-			loggerStation.print(clockManager.getCurrentFrame()+": [[[[[[[[[[[[[[[[ListeningPhase]]]]]]]]]]]]]]]] 1");
-			Thread.sleep(this.clockManager.calcToNextFrameInMS());
+			long timeToNextFrame = this.clockManager.calcToNextFrameInMS(); 
+			loggerStation.print(clockManager.getCurrentFrame()+": [[[[[[[[[[[[[[[[ListeningPhase]]]]]]]]]]]]]]]] while sleep="+timeToNextFrame);
+			Thread.sleep(timeToNextFrame);
 			messageManager.syncMessagesReceivedTime();
 		} while (!this.clockManager.isEOF());
 	}

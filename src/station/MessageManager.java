@@ -33,7 +33,6 @@ public class MessageManager {
 		this.freeSlots = resetFreeSlots(clockManager.getSlotCount());
 		System.out.println(Arrays.toString(freeSlots.toArray()));
 		resetAllMessageFromOldFrame(); 		
-		logger.print("ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ" + Arrays.toString(freeSlots.toArray()) + clockManager.getCurrentFrame()+": Message Manager");
 		this.ownMessage = null;
 	}
 	
@@ -70,7 +69,11 @@ public class MessageManager {
 	 * @param currentMessage
 	 */
 	public void receivedMessage(Message currentMessage) {
+		System.out.println("______________________");
+		System.out.println("receivedMessage REMOVE SLOT BEVOR  " + currentMessage.getReservedSlot() + ""+ Arrays.toString(freeSlots.toArray()));
 		freeSlots.remove((Byte) currentMessage.getReservedSlot());
+		System.out.println("receivedMessage REMOVE SLOT DANACH " + currentMessage.getReservedSlot() + "" + Arrays.toString(freeSlots.toArray()));
+		System.out.println("______________________");
 		currentMessage.setReceivedTimeInMS(clockManager.currentTimeMillis());
 		currentMessage.setCurrentCorrection(clockManager.getCorrectionInMS());
 		checkOwnMessage(currentMessage);
