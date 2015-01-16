@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
-import java.net.UnknownHostException; 
+import java.net.UnknownHostException;
+
+import com.sun.org.glassfish.external.statistics.annotations.Reset;
 
 public class Sender extends Thread {
 
@@ -38,6 +40,7 @@ public class Sender extends Thread {
 	@Override
 	public void run() {
 		try {
+			
 			Thread.sleep(this.clockManager.calcTimeUntilSlotInMS(sendingSlot));
 
 			// Wenn neue Nachricht vorhanden ist
@@ -45,25 +48,36 @@ public class Sender extends Thread {
 				// hole Nachricht vom DataManager
 				char[] data = dataManager.getData();
 				// hole reservierten Slot vom MessageManager
-				byte reserveredSlot = messageManager.calcNewSlot();
-				// erstelle das Paket
-				Message message = new Message(this.stationClass);
-				message.setData(data);
-				message.setReservedSlot(reserveredSlot);
-				message.setSendTime(clockManager.getCorrectedTimeInMS());
-				message.setReceivedTimeInMS(clockManager.currentTimeMillis());
-				message.setCurrentCorrection(clockManager.getCorrectionInMS());
-				datagramPacket.setData(message.toByteArray());
+				// if (messageManager.isAllowedSend()) {
 
-				// zeit prüfen
-				byte currentSlot = clockManager.getCurrentSlot();
+				byte reserveredSlot = messageManager.calcNewSlotSender();
+				if (reserveredSlot != 0) {
 
-				if (currentSlot == sendingSlot) {
-					// sende Paket ab
-					multicastSocket.send(datagramPacket);
-					messageManager.setOwnMessage(message);
-					messageManager.setReservedSlot(reserveredSlot); 
+					// erstelle das Paket
+					Message message = new Message(this.stationClass);
+					message.setData(data);
+					message.setReservedSlot(reserveredSlot);
+					message.setSendTime(clockManager.getCorrectedTimeInMS());
+					message.setReceivedTimeInMS(clockManager
+							.currentTimeMillis());
+					message.setCurrentCorrection(clockManager
+							.getCorrectionInMS());
+					datagramPacket.setData(message.toByteArray());
+
+					// zeit prüfen
+					byte currentSlot = clockManager.getCurrentSlot();
+
+					if (currentSlot == sendingSlot) {
+						// sende Paket ab
+						multicastSocket.send(datagramPacket);
+						messageManager.setOwnMessage(message);
+						messageManager.setReservedSlot(reserveredSlot);
+					}else {
+						messageManager.setReservedSlot((byte)0);
+//						System.out.println("zzz.ZZZz....ZZZZ.zzz.... Verschlafen CS: "+currentSlot);
+					}
 				}
+				// }
 			}
 
 		} catch (InterruptedException e) {
