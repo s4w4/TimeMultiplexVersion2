@@ -327,6 +327,22 @@ public class MessageManagerTest2 {
 	}
 
 	@Test
+	public void testIsOwnMessageSended() throws InterruptedException {
+		Thread.sleep(this.clockManager.calcToNextFrameInMS());
+		Message ownMessage = createMessage((byte) (1)); 
+		messageManager.setOwnMessage(ownMessage);
+		messageManager.receivedMessage(createMessage((byte) (1)));
+		Thread.sleep(40);
+		messageManager.receivedMessage(createMessage((byte) (2)));
+		
+		Message m1 = messageManager.getAllReceivedMessage().get(0);
+		Message m2 = messageManager.getAllReceivedMessage().get(1);
+		
+		System.out.println(messageManager.isOwnMessageSended());
+	}
+
+
+	@Test
 	public void testIsFreeSlotNextFrame1() throws InterruptedException {
 		Thread.sleep(this.clockManager.calcToNextFrameInMS());
 
