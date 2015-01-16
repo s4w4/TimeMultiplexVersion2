@@ -2,10 +2,6 @@ package test;
 
 import static org.junit.Assert.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.junit.Test;
 
 import station.ClockManager;
@@ -57,8 +53,8 @@ public class MessageManagerTest2 {
 	}
 
 	/**
-	 * Keine Kollision
-	 * alle Slots werden reserviert
+	 * Keine Kollision alle Slots werden reserviert
+	 * 
 	 * @throws InterruptedException
 	 */
 	@Test
@@ -79,6 +75,7 @@ public class MessageManagerTest2 {
 
 	/**
 	 * 2 Packete in Slot 1 empfangen
+	 * 
 	 * @throws InterruptedException
 	 */
 	@Test
@@ -95,8 +92,7 @@ public class MessageManagerTest2 {
 		messageManager.syncMessagesReceivedTime();
 
 		Message m1 = messageManager.getAllReceivedMessage().get(0);
-		Message m2 = messageManager.getAllReceivedMessage().get(1);
-		Message m3 = messageManager.getAllReceivedMessage().get(2);
+		Message m2 = messageManager.getAllReceivedMessage().get(1); 
 
 		// System.out.println("1: "+clockManager.getCorrectedSendingSlot(m1)+" Kollision= "+m1.isKollision());
 		// System.out.println("2: "+clockManager.getCorrectedSendingSlot(m2)+" Kollision= "+m2.isKollision());
@@ -111,7 +107,8 @@ public class MessageManagerTest2 {
 	}
 
 	/**
-	 * 3 Pakete in Slot 1 empfangen 
+	 * 3 Pakete in Slot 1 empfangen
+	 * 
 	 * @throws InterruptedException
 	 */
 	@Test
@@ -140,12 +137,10 @@ public class MessageManagerTest2 {
 	}
 
 	/**
-	 * Zuerst in Slot 1 Paket 1 und 2 empfangen und 
-	 *        in Slot 2 Paket 3 empfangen
-	 * Nach zeitverschiebung 
-	 * 		  in Slot 1 Paket 1 empfangen und
-	 *        in Slot 2 Paket 2 und 3 empfangen
-	 * 			
+	 * Zuerst in Slot 1 Paket 1 und 2 empfangen und in Slot 2 Paket 3 empfangen
+	 * Nach zeitverschiebung in Slot 1 Paket 1 empfangen und in Slot 2 Paket 2
+	 * und 3 empfangen
+	 * 
 	 * @throws InterruptedException
 	 */
 	@Test
@@ -176,8 +171,8 @@ public class MessageManagerTest2 {
 	}
 
 	/**
-	 * in Slot 1 Paket 1 und 2 empfangen und 
-	 * in Slot 2 Paket 3 empfangen
+	 * in Slot 1 Paket 1 und 2 empfangen und in Slot 2 Paket 3 empfangen
+	 * 
 	 * @throws InterruptedException
 	 */
 	@Test
@@ -208,6 +203,7 @@ public class MessageManagerTest2 {
 
 	/**
 	 * alte Pakete um 2 slots verschieben
+	 * 
 	 * @throws InterruptedException
 	 */
 	@Test
@@ -353,7 +349,7 @@ public class MessageManagerTest2 {
 		messageManager.syncMessagesReceivedTime();
 
 		Message m1 = messageManager.getAllReceivedMessage().get(0);
-		Message m2 = messageManager.getAllReceivedMessage().get(1);
+//		Message m2 = messageManager.getAllReceivedMessage().get(1);
 		m1.setOwnMessage(true);
 
 		assertEquals(true, messageManager.isOwnKollision());
@@ -362,18 +358,18 @@ public class MessageManagerTest2 {
 	@Test
 	public void testIsOwnMessageSended() throws InterruptedException {
 		Thread.sleep(this.clockManager.calcToNextFrameInMS());
-		Message ownMessage = createMessage((byte) (1)); 
+		Message ownMessage = createMessage((byte) (1));
 		messageManager.setOwnMessage(ownMessage);
 		messageManager.receivedMessage(createMessage((byte) (1)));
 		Thread.sleep(40);
 		messageManager.receivedMessage(createMessage((byte) (2)));
-		
-		Message m1 = messageManager.getAllReceivedMessage().get(0);
-		Message m2 = messageManager.getAllReceivedMessage().get(1);
-		
-		System.out.println(messageManager.isOwnMessageSended());
-	}
 
+//		Message m1 = messageManager.getAllReceivedMessage().get(0);
+//		Message m2 = messageManager.getAllReceivedMessage().get(1);
+
+//		System.out.println(messageManager.isOwnMessageSended());
+		assertTrue(messageManager.isOwnMessageSended());
+	}
 
 	@Test
 	public void testIsFreeSlotNextFrame1() throws InterruptedException {
@@ -389,7 +385,7 @@ public class MessageManagerTest2 {
 		// .toArray()));
 		Byte[] expandArr1 = { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
 				16, 17, 18, 19, 20, 21, 22, 23, 24, 25 };
-		assertEquals(expandArr1, messageManager.getFreeSlots().toArray());
+		assertArrayEquals(expandArr1, messageManager.getFreeSlots().toArray());
 	}
 
 	@Test
@@ -423,7 +419,7 @@ public class MessageManagerTest2 {
 		// .toArray()));
 		Byte[] expandArr1 = { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
 				16, 17, 18, 19, 20, 21, 22, 23, 24, 25 };
-		assertEquals(expandArr1, messageManager.getFreeSlots().toArray());
+		assertArrayEquals(expandArr1, messageManager.getFreeSlots().toArray());
 
 		Thread.sleep(this.clockManager.calcToNextFrameInMS());
 		messageManager.syncMessagesReceivedTime();
@@ -432,7 +428,7 @@ public class MessageManagerTest2 {
 		// .toArray()));
 		Byte[] expandArr2 = { 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
 				16, 17, 18, 19, 20, 21, 22, 23, 24, 25 };
-		assertEquals(expandArr2, messageManager.getFreeSlots().toArray());
+		assertArrayEquals(expandArr2, messageManager.getFreeSlots().toArray());
 
 	}
 
@@ -440,43 +436,43 @@ public class MessageManagerTest2 {
 	public void testCalcNewSlot1() throws InterruptedException {
 		Thread.sleep(this.clockManager.calcToNextFrameInMS());
 		for (int i = 0; i < 24; i++) {
-			messageManager.receivedMessage(createMessage((byte) (i+1)));
-			Thread.sleep(40); 
-		} 
-		Thread.sleep(40); 
+			messageManager.receivedMessage(createMessage((byte) (i + 1)));
+			Thread.sleep(40);
+		}
+		Thread.sleep(40);
 		messageManager.syncMessagesReceivedTime();
 		messageManager.resetFrame();
 
-//		System.out.println(Arrays.toString(messageManager.getFreeSlots()
-//				.toArray()));
-//		System.out.println(messageManager.calcNewSlot());
-//		Byte[] expandArr1 = { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-//				16, 17, 18, 19, 20, 21, 22, 23, 24, 25 };
-		
+		// System.out.println(Arrays.toString(messageManager.getFreeSlots()
+		// .toArray()));
+		// System.out.println(messageManager.calcNewSlot());
+		// Byte[] expandArr1 = { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+		// 16, 17, 18, 19, 20, 21, 22, 23, 24, 25 };
+
 		assertEquals(25, messageManager.calcNewSlot());
- 
+
 	}
+
 	@Test
 	public void testGetFreeSlot1() throws InterruptedException {
 		Thread.sleep(this.clockManager.calcToNextFrameInMS());
 		for (int i = 0; i < 24; i++) {
-			messageManager.receivedMessage(createMessage((byte) (i+1)));
-			Thread.sleep(40); 
-		} 
-		Thread.sleep(40); 
+			messageManager.receivedMessage(createMessage((byte) (i + 1)));
+			Thread.sleep(40);
+		}
+		Thread.sleep(40);
 		messageManager.syncMessagesReceivedTime();
 		messageManager.resetFrame();
 
-//		System.out.println(Arrays.toString(messageManager.getFreeSlots()
-//				.toArray()));
-//		System.out.println(messageManager.calcNewSlot());
-//		Byte[] expandArr1 = { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-//				16, 17, 18, 19, 20, 21, 22, 23, 24, 25 };
-		
+		// System.out.println(Arrays.toString(messageManager.getFreeSlots()
+		// .toArray()));
+		// System.out.println(messageManager.calcNewSlot());
+		// Byte[] expandArr1 = { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+		// 16, 17, 18, 19, 20, 21, 22, 23, 24, 25 };
+
 		assertEquals(25, messageManager.getFreeSlot());
 	}
-	 
-	
+
 	private Message createMessage(byte reserveredSlot) {
 
 		char[] data = new char[24];

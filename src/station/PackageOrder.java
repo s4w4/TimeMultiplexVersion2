@@ -27,8 +27,7 @@ public enum PackageOrder {
 	SEND_TIME(RESERVED_SLOT.to(), 8);
 
 	private int length;
-	private int from;
-	private int to;
+	private int from; 
 
 	private PackageOrder(int from, int length) {
 		this.from = from;

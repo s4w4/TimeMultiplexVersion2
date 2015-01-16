@@ -22,23 +22,12 @@ public class DataSourceListener extends Thread{
 			try {
 				
 				input.read(dataBuffer);
-				dataManager.setDataBuffer(dataBuffer);
-//				printCharArray(dataBuffer);	//ausgabe
+				dataManager.setDataBuffer(dataBuffer); 
 				 
 			} catch (IOException e) { 
 				e.printStackTrace();
 			} 
 		}
 	}
-	
-	
-	/**
-	 * gibt ein CharArray in Console aus
-	 * @param charArray
-	 */
-	private void printCharArray(char[] charArray){
-		for (int i = 0; i < 24; i++)
-			System.out.print(charArray[i]);			
-		System.out.println();
-	}
+	 
 }

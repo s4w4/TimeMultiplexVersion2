@@ -29,11 +29,11 @@ public class ClockManager {
 	 */
 	private int countStations = 0;
 
-	private long frameStartDistance;
+//	private long frameStartDistance;
 
 	private long lastCorrectionInMs = 0;
 	
-	private long currentFrame = 0; 
+//	private long currentFrame = 0; 
 
 
 
@@ -46,8 +46,7 @@ public class ClockManager {
 	 * @return
 	 */
 	public boolean isEOF() {
-		System.out.println("############################################ ISEOF "+ frameStartDistance +" + " + (lastCorrectionInMs%1000)+ " >=0 "+(frameStartDistance + (lastCorrectionInMs%1000) >= 0));
-		return getCurrentSlot() == 1;//frameStartDistance + (correctionInMS%1000) >= 0;
+		 return getCurrentSlot() == 1;//frameStartDistance + (correctionInMS%1000) >= 0;
 	}
 
 	/**
@@ -89,7 +88,7 @@ public class ClockManager {
 	 * @return
 	 */
 	public long calcToNextFrameInMS() {
-		this.frameStartDistance = getCorrectedTimeInMS() - getCurrentFrame() * 1000;
+//		this.frameStartDistance = getCorrectedTimeInMS() - getCurrentFrame() * 1000;
 		return 1000 - (getCorrectedTimeInMS() % 1000);
 	}
 	
@@ -106,8 +105,7 @@ public class ClockManager {
 				long sendtime = m.getSendTime(); 
 				long receivedTime = m.getReceivedTimeInMS();
 				timeDiffSum += sendtime-receivedTime;
-				countStations++; 				
-				System.out.println("??????????????????????????????????????" + timeDiffSum + " " + sendtime  + " " + receivedTime );
+				countStations++; 				 
 			}
 		}
 		if (countStations == 0){
@@ -128,7 +126,7 @@ public class ClockManager {
 	 */
 	public void resetFrame() {
 		this.countStations = 0;
-		frameStartDistance = 0; 
+//		frameStartDistance = 0; 
 	}
 
 	public long calcTimeUntilSlotInMS(byte slot) {

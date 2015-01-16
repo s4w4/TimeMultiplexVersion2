@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import station.Station;
 
+@SuppressWarnings("unused")
 public class StationTest {
 
 	@Test
@@ -15,14 +16,14 @@ public class StationTest {
 		int receivePort = 16000;
 		char stationClass = 'A';
 		long utcOffsetInMS = 0;
-		Station station = new Station(interfaceName, mcastAddress, receivePort, stationClass, utcOffsetInMS);
-//		station.start();
+		new Station(interfaceName, mcastAddress, receivePort, stationClass,
+				utcOffsetInMS);
+		// station.start();
 	}
 
 	@Test
 	public void testAblauf() {
-		
+
 	}
-	
-	
+
 }

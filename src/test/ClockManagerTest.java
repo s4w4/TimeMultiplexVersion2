@@ -11,14 +11,12 @@ import station.MessageManager;
 
 public class ClockManagerTest {
 
-	private ClockManager clockManager;
-	private MessageManager messageManager;
+	private ClockManager clockManager; 
 	private Logger logger;
 
 	public ClockManagerTest() {
 		this.clockManager = new ClockManager(0);
-		this.logger = new Logger("test");
-		this.messageManager = new MessageManager(logger, clockManager);
+		this.logger = new Logger("test"); 
 	}
 
 	/**

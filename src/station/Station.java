@@ -13,11 +13,6 @@ public class Station extends Thread {
 	private final int TTL_IN_SEC = 1;
 
 	/**
-	 * Wartezeit des Senders in millisekunden
-	 */
-	private final long SENDER_WAIT_TIME_IN_MILLISEC = 1000;
-
-	/**
 	 * Netzwerkinterfacename
 	 */
 	private String interfaceName;
@@ -43,11 +38,6 @@ public class Station extends Thread {
 	private DataSourceListener dataSourceListener;
 
 	/**
-	 * Sender
-	 */
-	private Sender sender;
-
-	/**
 	 * Multicastsocket
 	 */
 	private MulticastSocket multicastSocket;
@@ -67,16 +57,25 @@ public class Station extends Thread {
 	 */
 	private ClockManager clockManager;
 
+	/**
+	 * Logger
+	 */
 	private Logger loggerReceiver;
-	private Logger loggerSender;
 
+	/**
+	 * Message Manager Kollisionsbehandlung und Slotverwaltung
+	 */
 	private MessageManager messageManager;
 
+	/**
+	 * Data Manager Verwaltung der Nachrichten von der Datenquelle
+	 */
 	private DataManager dataManager;
 
+	/**
+	 * Offset
+	 */
 	private long utcOffsetInMS;
-
-	private Logger loggerStation;
 
 	public Station(String interfaceName, String mcastAddress, int receivePort,
 			char stationClass, long utcOffsetInMS) {
@@ -96,8 +95,6 @@ public class Station extends Thread {
 			// System.out.println("============== INITIAL PHASE ==============");
 			// Create Logger (Datensenke)
 			this.loggerReceiver = new Logger("LogReceiver");
-			this.loggerSender = new Logger("LogSender");
-			this.loggerStation = new Logger("LogStation");
 
 			// Create ClockManager
 			this.clockManager = new ClockManager(utcOffsetInMS);
@@ -130,52 +127,23 @@ public class Station extends Thread {
 			listeningPhase();
 
 			do {
-				System.out
-						.println("################################################## hauptweil start");
 
 				if (this.clockManager.isStartFrame()) {
-					System.out
-							.println("################################################## ");
-					System.out
-							.println("################################################## start frame "
-									+ clockManager.getCurrentFrame()
-									+ " CT = "
-									+ clockManager.currentTimeMillis());
-					System.out
-							.println("################################################## ");
-					loggerStation.print(clockManager.getCurrentFrame()
-							+ ": start " + clockManager.getCurrentFrame()
-							+ " CT = " + clockManager.currentTimeMillis());
 
 					if (this.messageManager.isOwnKollision()
 							|| !this.messageManager.isFreeSlotNextFrame()) {
-						loggerStation
-								.print(clockManager.getCurrentFrame()
-										+ "################################################## : OwnKollision OR NoFreeSlotsInNextFrame");
 						resetFrame();
 					} else {
-						// if (!this.messageManager.isOwnMessageSended()){
-						loggerStation
-								.print(clockManager.getCurrentFrame()
-										+ "################################################## : keine OwnKollision OR FreeSlotsInNextFrame");
-
 						sendingPhase();
-						// }
 					}
 
 				} else {
 					// Zurücksetzen
-					loggerStation
-							.print(clockManager.getCurrentFrame()
-									+ "################################################## : hauptwhlie else");
 					messageManager.setReservedSlot((byte) 0);
 					resetFrame();
 					startPhase();
 				}
 				listeningPhase();
-				loggerStation
-						.print(clockManager.getCurrentFrame()
-								+ "################################################## : hauptwhlie finish ");
 
 			} while (!finish);
 
@@ -183,50 +151,31 @@ public class Station extends Thread {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
-		} finally {
-			loggerStation
-					.print(clockManager.getCurrentFrame()
-							+ "################################################## : Station Beendet");
 		}
 	}
 
 	private void sendingPhase() {
 		byte freeSlot = this.messageManager.getFreeSlot();
-		loggerStation.print(clockManager.getCurrentFrame()
-				+ ": [[[[[[[[[[[[[[[[SendingPhase]]]]]]]]]]]]]]]] (" + freeSlot
-				+ ")");
 		this.resetFrame();
 		Sender sender = new Sender(dataManager, messageManager, clockManager,
 				multicastSocket, freeSlot, mcastAddress, receivePort,
-				stationClass, loggerSender);
+				stationClass);
 		sender.start();
 	}
 
 	private void listeningPhase() throws InterruptedException {
-		loggerStation.print(clockManager.getCurrentFrame()
-				+ ": [[[[[[[[[[[[[[[[ListeningPhase]]]]]]]]]]]]]]]] start");
 		do {
 			long timeToNextFrame = this.clockManager.calcToNextFrameInMS();
-			loggerStation
-					.print(clockManager.getCurrentFrame()
-							+ ": [[[[[[[[[[[[[[[[ListeningPhase]]]]]]]]]]]]]]]] while sleep="
-							+ timeToNextFrame);
 			Thread.sleep(timeToNextFrame);
 			messageManager.syncMessagesReceivedTime();
 		} while (!this.clockManager.isEOF());
 	}
 
 	private void startPhase() throws InterruptedException {
-		loggerStation.print(clockManager.getCurrentFrame()
-				+ ": [[[[[[[[[[[[[[[[StartPhase]]]]]]]]]]]]]]]] ");
 		do {
-			loggerStation.print(clockManager.getCurrentFrame()
-					+ ": [[[[[[[[[[[[[[[[StartPhase]]]]]]]]]]]]]]]] 1");
 			Thread.sleep(this.clockManager.calcToNextFrameInMS());
 			messageManager.syncMessagesReceivedTime();
 			if (this.clockManager.isEOF()) {
-				loggerStation.print(clockManager.getCurrentFrame()
-						+ ": [[[[[[[[[[[[[[[[StartPhase]]]]]]]]]]]]]]]] 2");
 				resetFrame();
 			}
 		} while (!this.clockManager.isEOF()
@@ -237,7 +186,6 @@ public class Station extends Thread {
 	 * Setzt Startwert auf Anfangswert
 	 */
 	private void resetFrame() {
-		loggerStation.print(clockManager.getCurrentFrame() + ": ResetFrame");
 		this.messageManager.resetFrame();
 		this.clockManager.resetFrame();
 	}
@@ -250,7 +198,7 @@ public class Station extends Thread {
 	}
 
 	public static void main(String[] args) {
-		if (args.length <= 5) {
+		if (args.length >= 4) {
 			String paramInterfaceName = args[0];
 			String paramMcastAddress = args[1];
 			int paramReceivePort = Integer.parseInt(args[2]);
@@ -260,7 +208,6 @@ public class Station extends Thread {
 			new Station(paramInterfaceName, paramMcastAddress,
 					paramReceivePort, paramStationClass, paramUtcOffsetInMS)
 					.start();
-
 		}
 	}
 

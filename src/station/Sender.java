@@ -1,12 +1,10 @@
 package station;
 
-
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
-import java.net.UnknownHostException;
-import java.nio.ByteBuffer;
+import java.net.UnknownHostException; 
 
 public class Sender extends Thread {
 
@@ -18,14 +16,12 @@ public class Sender extends Thread {
 	private ClockManager clockManager;
 	private DataManager dataManager;
 	private char stationClass;
-	private Logger logger;
 
 	public Sender(DataManager dataManager, MessageManager messageManager,
 			ClockManager clockManager, MulticastSocket multicastSocket,
 			byte sendingSlot, String multicastaddress, int port,
-			char stationClass, Logger logger) {
+			char stationClass) {
 		try {
-			this.logger = logger;
 			this.dataManager = dataManager;
 			this.sendingSlot = sendingSlot;
 			this.messageManager = messageManager;
@@ -42,13 +38,6 @@ public class Sender extends Thread {
 	@Override
 	public void run() {
 		try {
-			// fragt ClockManager die Zeit bis zum gewaehlten slot und wartet
-//			System.out
-//					.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Sending Slot: "
-//							+ sendingSlot
-//							+ " wait : "
-//							+ this.clockManager
-//									.calcTimeUntilSlotInMS(sendingSlot));
 			Thread.sleep(this.clockManager.calcTimeUntilSlotInMS(sendingSlot));
 
 			// Wenn neue Nachricht vorhanden ist
@@ -73,10 +62,7 @@ public class Sender extends Thread {
 					// sende Paket ab
 					multicastSocket.send(datagramPacket);
 					messageManager.setOwnMessage(message);
-					messageManager.setReservedSlot(reserveredSlot);
-					logger.printMessage(message, clockManager.getCurrentFrame());
-				} else {
-					logger.print("To Late \n"+message.toString());
+					messageManager.setReservedSlot(reserveredSlot); 
 				}
 			}
 
