@@ -6,6 +6,7 @@ import java.util.List;
 public class ClockManager {
 
 	private final char CLASS_A = 'A';
+	private final long TIME_TOLERANZ_IN_MS = 2; 
 
 	/**
 	 * die Länge eines Slots in Millisekunden
@@ -38,7 +39,6 @@ public class ClockManager {
 
 	public ClockManager(long utcOffsetInMS) {
 		this.correctionInMS = utcOffsetInMS;
-
 	}
 
 	/**
@@ -103,7 +103,6 @@ public class ClockManager {
 		long timeDiffSum = 0; 
 		for (Message m : allReceivedMessage){
 			if ((m.getStationClass() == CLASS_A) && !m.isKollision()) {
-				System.out.println(m);
 				long sendtime = m.getSendTime(); 
 				long receivedTime = m.getReceivedTimeInMS();
 				timeDiffSum += sendtime-receivedTime;
@@ -115,8 +114,8 @@ public class ClockManager {
 		}else{
 			lastCorrectionInMs = timeDiffSum / countStations;
 		}
-		correctionInMS += lastCorrectionInMs; 
-
+		if (lastCorrectionInMs > TIME_TOLERANZ_IN_MS)
+			correctionInMS += lastCorrectionInMs; 
 	}
 
 	public boolean isStartFrame() {

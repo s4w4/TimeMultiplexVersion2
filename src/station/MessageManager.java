@@ -29,9 +29,9 @@ public class MessageManager {
 	}
 
 	public void resetFrame() {
-		System.out.println(Arrays.toString(freeSlots.toArray()));
+//		System.out.println(Arrays.toString(freeSlots.toArray()));
 		this.freeSlots = resetFreeSlots(clockManager.getSlotCount());
-		System.out.println(Arrays.toString(freeSlots.toArray()));
+//		System.out.println(Arrays.toString(freeSlots.toArray()));
 		resetAllMessageFromOldFrame(); 		
 		this.ownMessage = null;
 	}
