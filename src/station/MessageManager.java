@@ -76,6 +76,7 @@ public class MessageManager {
 		System.out.println("______________________");
 		currentMessage.setReceivedTimeInMS(clockManager.currentTimeMillis());
 		currentMessage.setCurrentCorrection(clockManager.getCorrectionInMS());
+		System.out.println(currentMessage.getReceivedTimeInMS() + " " + clockManager.getCorrectedTimeInMS());
 		checkOwnMessage(currentMessage);
 		allReceivedMessage.add(currentMessage);
 	}

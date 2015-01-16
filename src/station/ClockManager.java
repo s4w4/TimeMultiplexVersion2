@@ -107,6 +107,7 @@ public class ClockManager {
 				long receivedTime = m.getReceivedTimeInMS();
 				timeDiffSum += sendtime-receivedTime;
 				countStations++; 				
+				System.out.println("??????????????????????????????????????" + timeDiffSum + " " + sendtime  + " " + receivedTime );
 			}
 		}
 		if (countStations == 0){
@@ -114,7 +115,7 @@ public class ClockManager {
 		}else{
 			lastCorrectionInMs = timeDiffSum / countStations;
 		}
-		if (lastCorrectionInMs > TIME_TOLERANZ_IN_MS)
+		if (Math.abs(lastCorrectionInMs) > TIME_TOLERANZ_IN_MS)
 			correctionInMS += lastCorrectionInMs; 
 	}
 
