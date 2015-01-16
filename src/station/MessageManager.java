@@ -29,19 +29,30 @@ public class MessageManager {
 	}
 
 	public void resetFrame() {
-		this.freeSlotsOldFrame = new ArrayList<Byte>(freeSlotsCurrentFrame);
+		this.freeSlotsOldFrame = resetFreeSlots(clockManager.getSlotCount());
 		this.freeSlotsCurrentFrame = resetFreeSlots(clockManager.getSlotCount());
 		resetAllMessageFromOldFrame();
+		if (freeSlotsCurrentFrame != null) {
+			logger.print("RESET: "
+						+ "\n OldFrame "+Arrays.toString(freeSlotsOldFrame.toArray())
+						+ "\n CurrentFrame "+ Arrays.toString(freeSlotsCurrentFrame.toArray()));
+						
+		}
 		this.ownMessage = null;
 	}
 
 	private void resetAllMessageFromOldFrame() {
 		ArrayList<Message> messagesToPrint = new ArrayList<Message>();
+//		this.freeSlotsOldFrame = new ArrayList<Byte>();
 		for (Message m : allReceivedMessage) {
-			if (m.isOldFrame()) {
+			if (m.isOldFrame() && !m.isKollision()) {
 				messagesToPrint.add(m);
+				// this.freeSlotsOldFrame.add((Byte) m.getReservedSlot());
+				freeSlotsOldFrame.remove((Byte) m.getReservedSlot());
+			}else if (!m.isOldFrame()) {
 				freeSlotsCurrentFrame.remove((Byte) m.getReservedSlot());
 			}
+
 		}
 		logger.printMessages(messagesToPrint, clockManager.getCurrentFrame(),
 				clockManager.getCorrectionInMS());
@@ -55,9 +66,6 @@ public class MessageManager {
 	 * @return
 	 */
 	private List<Byte> resetFreeSlots(int slotCount) {
-		if (freeSlotsCurrentFrame != null) {
-			logger.print("FREESLOTS: " + Arrays.toString(freeSlotsCurrentFrame.toArray()));
-		}
 		List<Byte> tempSlots = new ArrayList<Byte>();
 		for (int i = 1; i <= slotCount; i++) {
 			tempSlots.add((byte) i);
@@ -70,7 +78,7 @@ public class MessageManager {
 	 * @param currentMessage
 	 */
 	public void receivedMessage(Message currentMessage) {
-		int oldSize = freeSlotsCurrentFrame.size();
+//		int oldSize = freeSlotsCurrentFrame.size();
 		freeSlotsCurrentFrame.remove((Byte) currentMessage.getReservedSlot());
 
 		currentMessage.setReceivedTimeInMS(clockManager.currentTimeMillis());
@@ -113,13 +121,13 @@ public class MessageManager {
 						.getCurrentSendingSlot(m2)) {
 					m1.setKollision(true);
 					m2.setKollision(true);
-					removeFreeSlot(m1);
-					removeFreeSlot(m2);
+//					removeFreeSlot(m1);
+//					removeFreeSlot(m2);
 				} else {
 					m1.setKollision(false);
 					m2.setKollision(false);
-					addFreeSlot(m1);
-					addFreeSlot(m2);
+//					addFreeSlot(m1);
+//					addFreeSlot(m2);
 					if (i > 0
 							&& this.clockManager
 									.getCurrentSendingSlot(allReceivedMessage
@@ -127,7 +135,7 @@ public class MessageManager {
 									.getCurrentSendingSlot(m1)) {
 						allReceivedMessage.get(i - 1).setKollision(true);
 						m1.setKollision(true);
-						removeFreeSlot(m1);
+//						removeFreeSlot(m1);
 					}
 				}
 			}
@@ -158,8 +166,9 @@ public class MessageManager {
 		}
 		handleKollision();
 		for (Message m : allReceivedMessage) {
-			if (!m.isOwnMessage() && !m.isKollision() && m.getReservedSlot() == reservedSlot) {
-//				reservedSlot = 0;
+			if (!m.isOwnMessage() && !m.isKollision()
+					&& m.getReservedSlot() == reservedSlot) {
+				// reservedSlot = 0;
 				setReservedSlot((byte) 0);
 				allowedSendNextFrame = false;
 			}
@@ -252,11 +261,12 @@ public class MessageManager {
 
 		if (this.reservedSlot > 0) {
 			if (freeSlotsOldFrame != null) {
-				logger.print("GET Reserved Slot "
-						+ Arrays.toString(freeSlotsOldFrame.toArray())
+				logger.print("Station GET Reserved Slot "
+						+ "\n OldFrame "+Arrays.toString(freeSlotsOldFrame.toArray())
+						+ "\n CurrentFrame "+ Arrays.toString(freeSlotsCurrentFrame.toArray())
 						+ "\n ReservedSlot: " + reservedSlot);
 			}
-			
+
 			return reservedSlot;
 		} else {
 			byte cS = calcNewSlotStation();
@@ -278,9 +288,10 @@ public class MessageManager {
 			freeSlotsOldFrame.remove((Byte) res);
 		}
 		if (freeSlotsOldFrame != null) {
-			logger.print("GET FREESLOTS OLD Frame"
-					+ Arrays.toString(freeSlotsOldFrame.toArray()) + "\n RandomSlot: "
-					+ res);
+			logger.print("Station GET FREESLOTS "
+					+ "\n OldFrame "+Arrays.toString(freeSlotsOldFrame.toArray())
+					+ "\n CurrentFrame "+ Arrays.toString(freeSlotsCurrentFrame.toArray())
+					+ "\n RandomSlot: " + res);
 		}
 		return res;
 	}
@@ -293,16 +304,18 @@ public class MessageManager {
 			res = freeSlotsCurrentFrame.get(0);
 			freeSlotsCurrentFrame.remove((Byte) res);
 		} else {
-			res = freeSlotsCurrentFrame.get(random.nextInt(Math.abs((int) System
-					.currentTimeMillis() % 1000)) % freeSlotsCurrentFrame.size());
+			res = freeSlotsCurrentFrame.get(random.nextInt(Math
+					.abs((int) System.currentTimeMillis() % 1000))
+					% freeSlotsCurrentFrame.size());
 			freeSlotsCurrentFrame.remove((Byte) res);
 		}
 		if (freeSlotsCurrentFrame != null) {
-			logger.print("GET FREESLOTS Current Frame"
-					+ Arrays.toString(freeSlotsCurrentFrame.toArray()) + "\n RandomSlot: "
-					+ res);
+			logger.print("Sender GET FREESLOTS "
+					+ "\n OldFrame "+Arrays.toString(freeSlotsOldFrame.toArray())
+					+ "\n CurrentFrame "+ Arrays.toString(freeSlotsCurrentFrame.toArray())
+					+ "\n RandomSlot: " + res);
 		}
-//		reservedSlot = res;
+		// reservedSlot = res;
 		setReservedSlot(res);
 		return res;
 	}
@@ -319,11 +332,11 @@ public class MessageManager {
 	 *            the reservedSlot to set
 	 */
 	public void setReservedSlot(byte slot) {
-		if (slot == 0 && reservedSlot != 0) {
-			this.freeSlotsCurrentFrame.add((Byte) this.reservedSlot);
-		}else {
-			this.freeSlotsCurrentFrame.remove((Byte) slot);
-		}
+//		if (slot == 0 && reservedSlot != 0) {
+//			this.freeSlotsCurrentFrame.add((Byte) this.reservedSlot);
+//		} else {
+//			this.freeSlotsCurrentFrame.remove((Byte) slot);
+//		}
 		this.reservedSlot = slot;
 	}
 
