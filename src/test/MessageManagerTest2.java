@@ -56,6 +56,11 @@ public class MessageManagerTest2 {
 		assertEquals(0, messageManager.getAllReceivedMessage().size());
 	}
 
+	/**
+	 * Keine Kollision
+	 * alle Slots werden reserviert
+	 * @throws InterruptedException
+	 */
 	@Test
 	public void testSyncMessagesReceivedTimeHandleKollisionFalse()
 			throws InterruptedException {
@@ -72,6 +77,10 @@ public class MessageManagerTest2 {
 		}
 	}
 
+	/**
+	 * 2 Packete in Slot 1 empfangen
+	 * @throws InterruptedException
+	 */
 	@Test
 	public void testSyncMessagesReceivedTimeHandleKollisionTrue1()
 			throws InterruptedException {
@@ -101,6 +110,10 @@ public class MessageManagerTest2 {
 		}
 	}
 
+	/**
+	 * 3 Pakete in Slot 1 empfangen 
+	 * @throws InterruptedException
+	 */
 	@Test
 	public void testSyncMessagesReceivedTimeHandleTrue2()
 			throws InterruptedException {
@@ -118,24 +131,35 @@ public class MessageManagerTest2 {
 				.isKollision());
 		assertEquals(true, messageManager.getAllReceivedMessage().get(1)
 				.isKollision());
+		assertEquals(true, messageManager.getAllReceivedMessage().get(2)
+				.isKollision());
 		for (int i = 3; i < messageManager.getAllReceivedMessage().size(); i++) {
 			assertEquals(false, messageManager.getAllReceivedMessage().get(i)
 					.isKollision());
 		}
 	}
 
+	/**
+	 * Zuerst in Slot 1 Paket 1 und 2 empfangen und 
+	 *        in Slot 2 Paket 3 empfangen
+	 * Nach zeitverschiebung 
+	 * 		  in Slot 1 Paket 1 empfangen und
+	 *        in Slot 2 Paket 2 und 3 empfangen
+	 * 			
+	 * @throws InterruptedException
+	 */
 	@Test
 	public void testSyncMessagesReceivedTimeHandleKollisionVerrueckt()
 			throws InterruptedException {
 		Thread.sleep(this.clockManager.calcToNextFrameInMS());
 		messageManager.receivedMessage(createMessage((byte) (1)));
-		Thread.sleep(30);
+		Thread.sleep(20);
 		messageManager.receivedMessage(createMessage((byte) (2)));
-		Thread.sleep(10);
+		Thread.sleep(20);
 		messageManager.receivedMessage(createMessage((byte) (3)));
 		Thread.sleep(this.clockManager.calcToNextFrameInMS());
 
-		clockManager.setCorrectionInMS(11);
+		clockManager.setCorrectionInMS(20);
 		messageManager.syncMessagesReceivedTime();
 
 		Message m1 = messageManager.getAllReceivedMessage().get(0);
@@ -151,14 +175,19 @@ public class MessageManagerTest2 {
 		assertEquals(true, m3.isKollision());
 	}
 
+	/**
+	 * in Slot 1 Paket 1 und 2 empfangen und 
+	 * in Slot 2 Paket 3 empfangen
+	 * @throws InterruptedException
+	 */
 	@Test
 	public void testSyncMessagesReceivedTimeHandleKollisionNichtVerrueckt()
 			throws InterruptedException {
 		Thread.sleep(this.clockManager.calcToNextFrameInMS());
 		messageManager.receivedMessage(createMessage((byte) (1)));
-		Thread.sleep(30);
+		Thread.sleep(20);
 		messageManager.receivedMessage(createMessage((byte) (2)));
-		Thread.sleep(10);
+		Thread.sleep(20);
 		messageManager.receivedMessage(createMessage((byte) (3)));
 		Thread.sleep(this.clockManager.calcToNextFrameInMS());
 
@@ -177,6 +206,10 @@ public class MessageManagerTest2 {
 		assertEquals(false, m3.isKollision());
 	}
 
+	/**
+	 * alte Pakete um 2 slots verschieben
+	 * @throws InterruptedException
+	 */
 	@Test
 	public void testSyncMessagesReceivedTimeHandleKollisionSetCorrection1()
 			throws InterruptedException {
