@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.NetworkInterface;
-import java.util.Random;
 
 public class Station extends Thread {
 
@@ -90,9 +89,6 @@ public class Station extends Thread {
 	@Override
 	public void run() {
 		try {
-//			int rand = new Random().nextInt(Math.abs((int)System.currentTimeMillis()%1000));
-//			System.out.println("YYY "+rand);
-//			Thread.sleep(rand);
 			/****************************************************************
 			 * Initialphase
 			 ****************************************************************/
@@ -136,10 +132,8 @@ public class Station extends Thread {
 
 					if (this.messageManager.isOwnKollision()
 							|| !this.messageManager.isFreeSlotNextFrame()) {
-						messageManager.setReservedSlot((byte)0);
 						resetFrame();
 					} else {
-						
 						sendingPhase();
 					}
 
@@ -161,23 +155,12 @@ public class Station extends Thread {
 	}
 
 	private void sendingPhase() {
-		
-//		System.out.println(">>>>>>>> IS ALLOWED: "+messageManager.isAllowedSend());
-		
-		if (messageManager.isAllowedSend()) {
-			byte freeSlot = this.messageManager.getFreeSlot();
-			messageManager.setReservedSlot((byte)0);
-			this.resetFrame();
-			Sender sender = new Sender(dataManager, messageManager,
-					clockManager, multicastSocket, freeSlot, mcastAddress,
-					receivePort, stationClass);
-			sender.start();
-			
-		}else {
-			messageManager.setReservedSlot((byte)0);
-			this.resetFrame();
-		}
-		messageManager.setAllowedSend(true);
+		byte freeSlot = this.messageManager.getFreeSlot();
+		this.resetFrame();
+		Sender sender = new Sender(dataManager, messageManager, clockManager,
+				multicastSocket, freeSlot, mcastAddress, receivePort,
+				stationClass);
+		sender.start();
 	}
 
 	private void listeningPhase() throws InterruptedException {
