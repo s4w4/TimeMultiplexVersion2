@@ -36,8 +36,7 @@ public class MessageManager {
 				freeSlots.remove((Byte) m.getReservedSlot());
 			}
 		}
-		logger.printMessages(messagesToPrint, clockManager.getCurrentFrame(),
-				clockManager.getCorrectionInMS());
+		//logger.printMessages(messagesToPrint, clockManager.getCurrentFrame(), clockManager.getCorrectionInMS());
 		allReceivedMessage.removeAll(messagesToPrint);
 	}
 

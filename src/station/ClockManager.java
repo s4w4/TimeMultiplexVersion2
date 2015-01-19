@@ -130,7 +130,7 @@ public class ClockManager {
 	}
 
 	public long calcTimeUntilSlotInMS(byte slot) {
-		return ((slot - 1) * SLOT_TIME_IN_MS );// + SLOT_TIME_IN_MS/2;
+		return ((slot - 1) * SLOT_TIME_IN_MS ) + SLOT_TIME_IN_MS/2;
 	}
 
 	public long getCurrentFrame() {

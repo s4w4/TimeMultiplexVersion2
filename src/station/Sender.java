@@ -63,6 +63,8 @@ public class Sender extends Thread {
 					multicastSocket.send(datagramPacket);
 					messageManager.setOwnMessage(message);
 					messageManager.setReservedSlot(reserveredSlot); 
+				} else{
+					messageManager.setReservedSlot((byte) 0);
 				}
 			}
 
