@@ -117,7 +117,7 @@ public class MessageManager {
 	public void syncMessagesReceivedTime() {
 		handleKollision();
 		clockManager.sync(allReceivedMessage);
-		for (Message m : allReceivedMessage) {
+		for (Message m : new ArrayList<Message>(allReceivedMessage)) {
 			m.setCurrentCorrection(clockManager.getCorrectionInMS());
 			if (clockManager.getCurrentFrame() == clockManager.getFrame(m
 					.getReceivedTimeInMS())) {
