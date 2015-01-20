@@ -12,6 +12,9 @@ public class MessageManager {
 	private Logger logger;
 	private ClockManager clockManager;
 	private Set<Byte> freeSlots;
+	private List<Byte> allSlots = Arrays.asList(new Byte[] { 1, 2, 3, 4, 5, 6,
+			7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
+			24, 25 });
 	private List<Message> allReceivedMessage;
 	private Random random;
 	private Message ownMessage;
@@ -21,12 +24,12 @@ public class MessageManager {
 		this.logger = logger;
 		this.clockManager = clockManager;
 		this.allReceivedMessage = new ArrayList<Message>();
-		this.freeSlots = resetFreeSlots(clockManager.getSlotCount());
+		this.freeSlots = new HashSet<Byte>(allSlots);
 		this.random = new Random();
 	}
 
 	public void resetFrame() {
-		this.freeSlots = resetFreeSlots(clockManager.getSlotCount());
+		this.freeSlots = new HashSet<Byte>(allSlots);
 		resetAllMessageFromOldFrame();
 		this.ownMessage = null;
 	}
@@ -43,20 +46,7 @@ public class MessageManager {
 		// clockManager.getCorrectionInMS());
 		allReceivedMessage.removeAll(messagesToPrint);
 	}
-
-	/**
-	 * erstellt eine Liste mit freien Slots
-	 * 
-	 * @param slotCount
-	 * @return
-	 */
-	private Set<Byte> resetFreeSlots(int slotCount) {
-		Set<Byte> tempSlots = new HashSet<Byte>();
-		for (int i = 1; i <= slotCount; i++) {
-			tempSlots.add((byte) i);
-		}
-		return tempSlots;
-	}
+ 
 
 	/**
 	 * 
