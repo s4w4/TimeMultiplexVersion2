@@ -70,6 +70,7 @@ public class Sender extends Thread {
 					messageManager.setReservedSlot(reserveredSlot); 
 				} else{
 					messageManager.setReservedSlot((byte) 0);
+					System.out.println("hat vergessen zu senden an slot = " + sendingSlot + " reserved was = "+ reserveredSlot + " frame = " + clockManager.getCurrentFrame());
 				}
 //			}
 
