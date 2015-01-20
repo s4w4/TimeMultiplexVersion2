@@ -1,6 +1,7 @@
 package station;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ClockManager {
@@ -100,7 +101,7 @@ public class ClockManager {
 	public void sync(List<Message> allReceivedMessage) {
 		countStations = 0; 
 		long timeDiffSum = 0; 
-		for (Message m : allReceivedMessage){
+		for (Message m : new ArrayList<Message>(allReceivedMessage)){
 			if ((m.getStationClass() == CLASS_A) && !m.isKollision()) {
 				long sendtime = m.getSendTime(); 
 				long receivedTime = m.getReceivedTimeInMS();
@@ -135,7 +136,7 @@ public class ClockManager {
 		if (slot != 1)
 			res = ((slot - 1) * SLOT_TIME_IN_MS ) + SLOT_TIME_IN_MS/2 - frameStartDistance;
 		
-		System.out.println(">>>>>>>>>>> slot: "+slot+" FrameDistance: "+frameStartDistance+" CF: "+getCurrentFrame()+" CT: "+getCorrectedTimeInMS()+" RES:"+res);
+//		System.out.println(">>>>>>>>>>> slot: "+slot+" FrameDistance: "+frameStartDistance+" CF: "+getCurrentFrame()+" CT: "+getCorrectedTimeInMS()+" RES:"+res);
 		return res < 0 ? 0 : res;
 	}
 

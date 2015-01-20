@@ -33,7 +33,7 @@ public class MessageManager {
 
 	private void resetAllMessageFromOldFrame() {
 		ArrayList<Message> messagesToPrint = new ArrayList<Message>();
-		for (Message m : allReceivedMessage) {
+		for (Message m : new ArrayList<Message>(allReceivedMessage)) {
 			if (m.isOldFrame()) {
 				messagesToPrint.add(m);
 				freeSlots.remove((Byte) m.getReservedSlot());
@@ -224,7 +224,7 @@ public class MessageManager {
 	public byte calcNewSlot() {
 		Set<Byte> fs = new HashSet<Byte>(freeSlots);
 		int size = fs.size();
-		System.out.println("> "+clockManager.getCorrectedTimeInMS()+" ::: "+Arrays.toString(fs.toArray()));
+//		System.out.println("> "+clockManager.getCorrectedTimeInMS()+" ::: "+Arrays.toString(fs.toArray()));
 		if (size != 0) {
 			int rand = random.nextInt(size);
 			int i = 0;
