@@ -7,8 +7,10 @@ public class RandomGenerator {
 	private SecureRandom secureRandomGenerator;
 	private SecureRandom secureRandom1;
 
-	public RandomGenerator() throws NoSuchAlgorithmException {
-		this.secureRandomGenerator = SecureRandom.getInstance("SHA1PRNG");
+	public RandomGenerator() {
+		try {
+			this.secureRandomGenerator = SecureRandom.getInstance("SHA1PRNG");
+	
 		
 		byte[] randomBytes = new byte[1];
 		secureRandomGenerator.nextBytes(randomBytes);
@@ -18,9 +20,13 @@ public class RandomGenerator {
 		
 		secureRandom1 = SecureRandom.getInstance("SHA1PRNG");
 		secureRandom1.setSeed(seed);
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
-	public double nextInt() throws NoSuchAlgorithmException {
+	public double nextInt(){
 		
 		return secureRandom1.nextDouble();
 

@@ -168,6 +168,10 @@ public class Station extends Thread {
 	private void listeningPhase() throws InterruptedException {
 		do {
 			long timeToNextFrame = this.clockManager.calcToNextFrameInMS();
+			if(timeToNextFrame < 0)
+				System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<0");
+			if(timeToNextFrame>1000)
+				System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>1000");
 			Thread.sleep(timeToNextFrame);
 			messageManager.syncMessagesReceivedTime();
 		} while (!this.clockManager.isEOF());

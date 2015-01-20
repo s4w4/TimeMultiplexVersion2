@@ -67,6 +67,7 @@ public class MessageManager {
 		currentMessage.setReceivedTimeInMS(clockManager.currentTimeMillis());
 		currentMessage.setCurrentCorrection(clockManager.getCorrectionInMS());
 		checkOwnMessage(currentMessage);
+		currentMessage.setOldFrame(false);
 		allReceivedMessage.add(currentMessage);
 	}
 

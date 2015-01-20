@@ -39,6 +39,10 @@ public class Sender extends Thread {
 	public void run() {
 		long waitTime = this.clockManager.calcTimeUntilSlotInMS(sendingSlot);
 		try {
+			if(waitTime < 0)
+				System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<0");
+			if(waitTime>1000)
+				System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>1000");
 			Thread.sleep(waitTime);
 
 			// Wenn neue Nachricht vorhanden ist
@@ -59,7 +63,7 @@ public class Sender extends Thread {
 				// zeit prüfen
 				byte currentSlot = clockManager.getCurrentSlot();
 
-				if (currentSlot == sendingSlot && reserveredSlot != 0 && sendingSlot != 0) {
+				if (currentSlot == sendingSlot) {
 					// sende Paket ab
 					multicastSocket.send(datagramPacket);
 					messageManager.setOwnMessage(message);
