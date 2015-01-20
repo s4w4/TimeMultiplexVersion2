@@ -102,7 +102,7 @@ public class ClockManager {
 		countStations = 0; 
 		long timeDiffSum = 0; 
 		for (Message m : new ArrayList<Message>(allReceivedMessage)){
-			if ((m.getStationClass() == CLASS_A) && !m.isKollision()) {
+			if ((m.getStationClass() == CLASS_A) ) {//&& !m.isKollision()) {
 				long sendtime = m.getSendTime(); 
 				long receivedTime = m.getReceivedTimeInMS();
 				timeDiffSum += sendtime-receivedTime;
