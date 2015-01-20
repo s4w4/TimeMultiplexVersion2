@@ -37,11 +37,12 @@ public class Sender extends Thread {
 
 	@Override
 	public void run() {
+		long waitTime = this.clockManager.calcTimeUntilSlotInMS(sendingSlot);
 		try {
-			Thread.sleep(this.clockManager.calcTimeUntilSlotInMS(sendingSlot));
+			Thread.sleep(waitTime);
 
 			// Wenn neue Nachricht vorhanden ist
-			if (dataManager.hasNextData()) {
+//			if (dataManager.hasNextData()) {
 				// hole Nachricht vom DataManager
 				char[] data = dataManager.getData();
 				// hole reservierten Slot vom MessageManager
@@ -58,7 +59,7 @@ public class Sender extends Thread {
 				// zeit prüfen
 				byte currentSlot = clockManager.getCurrentSlot();
 
-				if (currentSlot == sendingSlot) {
+				if (currentSlot == sendingSlot && reserveredSlot != 0 && sendingSlot != 0) {
 					// sende Paket ab
 					multicastSocket.send(datagramPacket);
 					messageManager.setOwnMessage(message);
@@ -66,12 +67,12 @@ public class Sender extends Thread {
 				} else{
 					messageManager.setReservedSlot((byte) 0);
 				}
-			}
+//			}
 
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
+			e.printStackTrace(); 
 		}
 	}
 }

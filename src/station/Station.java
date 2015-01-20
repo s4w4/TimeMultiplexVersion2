@@ -130,8 +130,10 @@ public class Station extends Thread {
 
 				if (this.clockManager.isStartFrame()) {
 
-					if (this.messageManager.isOwnKollision()
-							|| !this.messageManager.isFreeSlotNextFrame()) {
+					if (this.messageManager.isOwnKollision() || (this.messageManager.isOwnKollision()
+							&& !this.messageManager.isFreeSlotNextFrame())
+							) {
+//						messageManager.syncMessagesReceivedTime();
 						resetFrame();
 					} else {
 						sendingPhase();
@@ -139,7 +141,7 @@ public class Station extends Thread {
 
 				} else {
 					// Zurücksetzen
-					messageManager.setReservedSlot((byte) 0);
+					messageManager.setReservedSlot((byte) 0); 
 					resetFrame();
 					startPhase();
 				}
@@ -169,6 +171,7 @@ public class Station extends Thread {
 			Thread.sleep(timeToNextFrame);
 			messageManager.syncMessagesReceivedTime();
 		} while (!this.clockManager.isEOF());
+		resetFrame();
 	}
 
 	private void startPhase() throws InterruptedException {

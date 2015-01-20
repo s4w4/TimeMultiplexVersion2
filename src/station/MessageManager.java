@@ -1,14 +1,17 @@
 package station;
 
-import java.util.ArrayList; 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 public class MessageManager {
 
 	private Logger logger;
 	private ClockManager clockManager;
-	private List<Byte> freeSlots;
+	private Set<Byte> freeSlots;
 	private List<Message> allReceivedMessage;
 	private Random random;
 	private Message ownMessage;
@@ -36,7 +39,8 @@ public class MessageManager {
 				freeSlots.remove((Byte) m.getReservedSlot());
 			}
 		}
-		//logger.printMessages(messagesToPrint, clockManager.getCurrentFrame(), clockManager.getCorrectionInMS());
+		// logger.printMessages(messagesToPrint, clockManager.getCurrentFrame(),
+		// clockManager.getCorrectionInMS());
 		allReceivedMessage.removeAll(messagesToPrint);
 	}
 
@@ -46,8 +50,8 @@ public class MessageManager {
 	 * @param slotCount
 	 * @return
 	 */
-	private List<Byte> resetFreeSlots(int slotCount) {
-		List<Byte> tempSlots = new ArrayList<Byte>();
+	private Set<Byte> resetFreeSlots(int slotCount) {
+		Set<Byte> tempSlots = new HashSet<Byte>();
 		for (int i = 1; i <= slotCount; i++) {
 			tempSlots.add((byte) i);
 		}
@@ -90,9 +94,13 @@ public class MessageManager {
 						.getCurrentSendingSlot(m2)) {
 					m1.setKollision(true);
 					m2.setKollision(true);
+//					freeSlots.add((Byte)m1.getReservedSlot());
+//					freeSlots.add((Byte)m2.getReservedSlot());
 				} else {
 					m1.setKollision(false);
 					m2.setKollision(false);
+//					freeSlots.remove((Byte)m1.getReservedSlot());
+//					freeSlots.remove((Byte)m2.getReservedSlot());
 					if (i > 0
 							&& this.clockManager
 									.getCurrentSendingSlot(allReceivedMessage
@@ -100,13 +108,14 @@ public class MessageManager {
 									.getCurrentSendingSlot(m1)) {
 						allReceivedMessage.get(i - 1).setKollision(true);
 						m1.setKollision(true);
+//						freeSlots.add((Byte)m1.getReservedSlot());
 					}
-				} 
+				}
 			}
 	}
 
 	public void syncMessagesReceivedTime() {
-		handleKollision(); 
+		handleKollision();
 		clockManager.sync(allReceivedMessage);
 		for (Message m : allReceivedMessage) {
 			m.setCurrentCorrection(clockManager.getCorrectionInMS());
@@ -154,7 +163,7 @@ public class MessageManager {
 	/**
 	 * @return the freeSlots
 	 */
-	public List<Byte> getFreeSlots() {
+	public Set<Byte> getFreeSlots() {
 		return freeSlots;
 	}
 
@@ -162,7 +171,7 @@ public class MessageManager {
 	 * @param freeSlots
 	 *            the freeSlots to set
 	 */
-	public void setFreeSlots(List<Byte> freeSlots) {
+	public void setFreeSlots(Set<Byte> freeSlots) {
 		this.freeSlots = freeSlots;
 	}
 
@@ -213,7 +222,23 @@ public class MessageManager {
 	}
 
 	public byte calcNewSlot() {
-		return freeSlots.get(random.nextInt(freeSlots.size()));
+		Set<Byte> fs = new HashSet<Byte>(freeSlots);
+		int size = fs.size();
+		System.out.println("> "+clockManager.getCorrectedTimeInMS()+" ::: "+Arrays.toString(fs.toArray()));
+		if (size != 0) {
+			int rand = random.nextInt(size);
+			int i = 0;
+			for(byte obj : fs)
+			{
+			    if (i == rand)
+			        return obj;
+			    i = i + 1;
+			}
+			return fs.iterator().next();//get(rand);
+		} else {
+			return 0;
+		}
+
 	}
 
 	/**
@@ -224,11 +249,14 @@ public class MessageManager {
 	}
 
 	/**
-	 * @param reservedSlot
+	 * @param rs
 	 *            the reservedSlot to set
 	 */
-	public void setReservedSlot(byte reservedSlot) {
-		this.reservedSlot = reservedSlot;
+	public void setReservedSlot(byte rs) {
+		if (rs == 0 && reservedSlot != 0) {
+			freeSlots.add((Byte) this.reservedSlot);
+		}
+		this.reservedSlot = rs;
 	}
 
 }

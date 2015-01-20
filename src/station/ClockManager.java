@@ -29,7 +29,7 @@ public class ClockManager {
 	 */
 	private int countStations = 0;
 
-//	private long frameStartDistance;
+	private long frameStartDistance;
 
 	private long lastCorrectionInMs = 0;
 	
@@ -126,11 +126,17 @@ public class ClockManager {
 	 */
 	public void resetFrame() {
 		this.countStations = 0;
-//		frameStartDistance = 0; 
+		frameStartDistance = 0; 
 	}
 
 	public long calcTimeUntilSlotInMS(byte slot) {
-		return ((slot - 1) * SLOT_TIME_IN_MS ) + SLOT_TIME_IN_MS/2;
+		this.frameStartDistance = getCorrectedTimeInMS() - getCurrentFrame() * 1000;
+		long res = 0;
+		if (slot != 1)
+			res = ((slot - 1) * SLOT_TIME_IN_MS ) + SLOT_TIME_IN_MS/2 - frameStartDistance;
+		
+		System.out.println(">>>>>>>>>>> slot: "+slot+" FrameDistance: "+frameStartDistance+" CF: "+getCurrentFrame()+" CT: "+getCorrectedTimeInMS()+" RES:"+res);
+		return res < 0 ? 0 : res;
 	}
 
 	public long getCurrentFrame() {
